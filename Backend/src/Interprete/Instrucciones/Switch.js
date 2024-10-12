@@ -9,33 +9,33 @@ class Switch extends Instruccion {
     constructor(expresion, casos, defecto, linea, columna) {
         super(TipoInstr.SWITCH, linea, columna);
         this.expresion = expresion;
-        this.casos = casos || [];
-        this.defecto = defecto || [];
+        if (typeof casos != 'undefined') {
+            this.casos = casos;
+        }
+        if (typeof defecto != 'undefined') {
+            this.defecto = defecto;
+        }
     }
 
     ejecutar(entorno) {
         this.expresion.ejecutar(entorno);
         let valor = this.expresion.valor;
 
-        if (this.casos.length === 0 && this.defecto.length === 0) {
+        if (typeof this.casos === 'undefined' && typeof this.defecto === 'undefined') {
             errores.push(new Error("Semántico", "No se ha declarado ningún caso o defecto", this.linea, this.columna));
             this.tipo = TipoInstr.ERROR;
             return this.tipo;
         }
 
         let casoEncontrado = false;
-        console.log("Ejecutando switch  fewdsww  "+ this.casos.length);
-
-        if(this.casos.length > 0){
+        if(typeof this.casos != 'undefined'){
+            let sinBreak = false;
             for (let i = 0; i < this.casos.length; i++) {
                 let caso = this.casos[i] ;
                 caso.case.ejecutar(entorno);
                 let expSwitch = caso.case.valor;
-                console.log("Expresion switch: "+expSwitch);
-    
                 if (expSwitch == valor) {
                     casoEncontrado = true;
-                    console.log("Ejecutando caso");
                     let nuevoEntorno = new Entorno(entorno, 'switch');
     
                     for (let j = 0; j < caso.INS.length; j++) {
@@ -45,12 +45,26 @@ class Switch extends Instruccion {
                         if (res instanceof Break) {
                             return null;
                         }
+                        sinBreak = true;
+                        
                     }
+                    continue;
+                }
+                if(sinBreak){
+                    let nuevoEntorno = new Entorno(entorno, 'switch');
+                    for (let k = 0; k < caso.INS.length; k++) {
+                        let instruccion = caso.INS[k];
+                        let res = instruccion.ejecutar(nuevoEntorno);
+                        if (res instanceof Break) {
+                            return null;
+                        }
+                    }
+
                 }
             }
         }
 
-        if (!casoEncontrado) {
+        if (!casoEncontrado ) {
             let nuevoEntorno = new Entorno(entorno, 'switch');
             for (let i = 0; i < this.defecto.length; i++) {
                 let instruccion = this.defecto[i];
@@ -64,34 +78,36 @@ class Switch extends Instruccion {
 
     getNodo() {
         let nodo = new NodoArbol("SWITCH");
-        nodo.agregarHijo("switch");
-        nodo.agregarHijo("(");
-        nodo.agregarHijo(this.expresion.getNodo());
-        nodo.agregarHijo(")");
-        nodo.agregarHijo("{");
-
-        this.casos.forEach(caso => {
-            let nodoCaso = new NodoArbol("CASO");
-            nodoCaso.agregarHijo("case");
-            nodoCaso.agregarHijo(caso.case.getNodo());
-            nodoCaso.agregarHijo(":");
-            caso.INS.forEach(instruccion => {
-                nodoCaso.agregarHijo(instruccion.getNodo());
-            });
-            nodo.agregarHijo(nodoCaso);
-        });
-
-        if (this.defecto.length > 0) {
-            let nodoDefecto = new NodoArbol("DEFECTO");
-            nodoDefecto.agregarHijo("default");
-            nodoDefecto.agregarHijo(":");
-            this.defecto.forEach(instruccion => {
-                nodoDefecto.agregarHijo(instruccion.getNodo());
-            });
-            nodo.agregarHijo(nodoDefecto);
+        nodo.addHijo("switch");
+        nodo.addHijo("(");
+        nodo.addHijo(this.expresion.getNodo());
+        nodo.addHijo(")");
+        nodo.addHijo("{");
+        let nodoCasos = new NodoArbol("CASOS");
+        if (typeof this.casos != 'undefined') {
+            for (let i = 0; i < this.casos.length; i++) {
+                let caso = this.casos[i];
+                let nodoCaso = new NodoArbol("CASO");
+                nodoCaso.addHijo("case");
+                nodoCaso.addHijo(caso.case.getNodo());
+                nodoCaso.addHijo(":");
+                let nodoInstrucciones = new NodoArbol("INSTRUCCIONES");
+                for (let j = 0; j < caso.INS.length; j++) {
+                    let instruccion = caso.INS[j];
+                    nodoInstrucciones.addHijo(instruccion.getNodo());
+                }
+                nodoCaso.addHijo(nodoInstrucciones);
+                nodoCasos.addHijo(nodoCaso);
+            }
         }
-
-        nodo.agregarHijo("}");
+        nodo.addHijo(nodoCasos);
+        let nodoDefecto = new NodoArbol("DEFECTO");
+        for (let i = 0; i < this.defecto.length; i++) {
+            let instruccion = this.defecto[i];
+            nodoDefecto.addHijo(instruccion.getNodo());
+        }
+        nodo.addHijo(nodoDefecto);
+        nodo.addHijo("}");
         return nodo;
     }
 }

@@ -25,6 +25,8 @@
     const If = require('../Interprete/Instrucciones/If.js');
     const Switch = require('../Interprete/Instrucciones/Switch.js');
     const Break = require('../Interprete/Instrucciones/Break.js');
+    const While = require('../Interprete/Instrucciones/While.js');
+    const For = require('../Interprete/Instrucciones/For.js');
 
 %}
 
@@ -109,7 +111,7 @@
 
 
 "FOR"                   return "FOR";
-"WHILE"                 return "WHILE";
+"UNTIL"                 return "UNTIL";
 "DO"                    return "DO";
 "SWITCH"                return "SWITCH";
 "IF"                    return "IF";
@@ -151,6 +153,7 @@
 /lex
                 
 /* Asociación de operadores y precedencia */
+%left 'PARDER'
 %left 'DOSPT'
 %left 'OR'
 %left 'AND'
@@ -181,11 +184,13 @@ INS
     | DECLARACION PTCOMA { $$ = $1; }
     | ASIGNACION PTCOMA { $$ = $1; }
     | DTERNARIO PTCOMA { $$ = $1; }
+    | FFOR { $$ = $1; }
     | INCREMENTO PTCOMA { $$ = $1; }
     | DECREMENTO PTCOMA { $$ = $1; }
     | FIF { $$ = $1; }
     | FSWITCH { $$ = $1; }
     | FBREAK { $$ = $1; }
+    | FWHILE { $$ = $1; }
     |error    { errores.push(new Error("Error Sintactico", `Error Sintactico, caracter '${yytext}' no esperado.`, this._$.first_line, this._$.first_column));   
         console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); }
 ;
@@ -221,10 +226,15 @@ FIF
     | IF PARIZ EXP PARDER LLAVEIZ LINS LLAVEDER ELSE LLAVEIZ LINS LLAVEDER { $$ = new If($3, $6, $10, this._$.first_line, this._$.first_column); }
 ;
 
+FWHILE
+    : WHILE PARIZ EXP PARDER LLAVEIZ LINS LLAVEDER { $$ = new While($3, $6, this._$.first_line, this._$.first_column); }
+;
+
 FSWITCH
     : SWITCH PARIZ EXP PARDER LLAVEIZ LCASES DEFAULT DOSPT LINS LLAVEDER { $$ = new Switch($3, $6, $9, this._$.first_line, this._$.first_column); }
-    | SWITCH PARIZ EXP PARDER LLAVEIZ DEFAULT DOSPT LINS LLAVEDER { $$ = new Switch($3, $6, this._$.first_line, this._$.first_column); }
-    | SWITCH PARIZ EXP PARDER LLAVEIZ LCASES LLAVEDER { $$ = new Switch($3, $6, this._$.first_line, this._$.first_column); }
+    | SWITCH PARIZ EXP PARDER LLAVEIZ DEFAULT DOSPT LINS LLAVEDER { $$ = new Switch($3, undefined, $8, this._$.first_line, this._$.first_column); }
+    | SWITCH PARIZ EXP PARDER LLAVEIZ LCASES LLAVEDER { $$ = new Switch($3, $6, undefined, this._$.first_line, this._$.first_column); }
+    | SWITCH PARIZ EXP PARDER LLAVEIZ LLAVEDER { $$ = new Switch($3, undefined, undefined, this._$.first_line, this._$.first_column); }
 ;
 
 LCASES
@@ -236,6 +246,22 @@ LCASES
 FBREAK
     : BREAK PTCOMA { $$ = new Break(this._$.first_line, this._$.first_column); }
 ;
+
+FFOR
+    :FOR PARIZ DECLARACION PTCOMA EXP PTCOMA ACTUALIZACION LLAVEIZ LINS LLAVEDER { $$ = new For($3, $5, $7, $9, this._$.first_line, this._$.first_column); }
+    |FOR PARIZ ASIGNACION PTCOMA EXP PTCOMA ACTUALIZACION LLAVEIZ LLAVEDER { $$ = new For($3, $5, $7, $9, this._$.first_line, this._$.first_column); }
+
+;
+
+ACTUALIZACION
+    :ASIGNACION PARDER { $$ = $1; }
+    |INCREMENTO PARDER { $$ = $1; }
+    |DECREMENTO PARDER{ $$ = $1; }
+;
+
+DOWHILE
+    : DO LLAVEIZ LINS LLAVEDER UNTIL PARIZ EXP PARDER PTCOMA { $$ = new DoWhile($3, $7, this._$.first_line, this._$.first_column); }
+
 
 EXP 
     : EXP MAS EXP           {$$ = new Arithmetica($1, "+",  $3,this._$.first_line, this._$.first_column);}
