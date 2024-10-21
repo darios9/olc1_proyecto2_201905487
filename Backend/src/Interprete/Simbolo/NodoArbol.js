@@ -1,16 +1,16 @@
 class NodoArbol {
     constructor(valor){
         this.valor = valor;
-        this.ListHijos = [];
+        this.listaHijos = [];
     }
 
     agregarHijo(hijo){
-        this.ListHijos.push(hijo);
+        this.listaHijos.push(new NodoArbol(hijo));
     }
 
     agregarHijoArbol(hijo){
         if(hijo !== undefined){
-            this.ListHijos.push(hijo);
+            this.listaHijos.push(hijo);
         }  
     }
 }

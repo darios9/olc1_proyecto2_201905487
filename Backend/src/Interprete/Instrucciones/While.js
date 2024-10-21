@@ -1,11 +1,12 @@
 const { Instruccion, TipoInstr } = require("../Abstracto/Instrucciones.js");
 const { errores } = require("../Errores/ListErrores.js");
 const Error = require("../Errores/Error.js");
-const { NodoArbol } = require("../Simbolo/NodoArbol.js");
+const NodoArbol = require("../Simbolo/NodoArbol.js");
 const e = require("express");
 const { TipoDato } = require("../Abstracto/Expresion.js");
 const {Entorno} = require("../Simbolo/Entorno.js");
 const Break = require("./Break.js");
+const Continuar = require("./Continuar.js");
 
 
 class While extends Instruccion {
@@ -22,6 +23,12 @@ class While extends Instruccion {
             let nuevoEntorno = new Entorno(entorno, 'while');
             for (let i = 0; i < this.instrucciones.length; i++) {
                 let instruccion = this.instrucciones[i];
+
+                if (instruccion instanceof Continuar) {
+                    return instruccion;
+                }
+
+
                 let res = instruccion.ejecutar(nuevoEntorno);
                 if (res instanceof Break) {
                     return null;
@@ -33,15 +40,17 @@ class While extends Instruccion {
         return null;
     }
 
-    getArbol() {
-        let nodo = new NodoArbol("WHILE", this.linea, this.columna);
-        nodo.agregarHijo(this.condicion.getArbol());
-        let nodoInstrucciones = new NodoArbol("INSTRUCCIONES", this.linea, this.columna);
-        for (let i = 0; i < this.instrucciones.length; i++) {
-            let instruccion = this.instrucciones[i];
-            nodoInstrucciones.agregarHijo(instruccion.getArbol());
+    getNodo() {
+        let nodo = new NodoArbol("WHILE");
+        nodo.agregarHijo("while");
+        nodo.agregarHijo("(");
+        nodo.agregarHijoArbol(this.condicion.getNodo());
+        nodo.agregarHijo(")");
+        let instrucciones = new NodoArbol("INSTRUCCIONES");
+        for (let instr of this.instrucciones) {
+            instrucciones.agregarHijoArbol(instr.getNodo());
         }
-        nodo.agregarHijo(nodoInstrucciones);
+        nodo.agregarHijoArbol(instrucciones);
         return nodo;
     }
 }

@@ -1,7 +1,7 @@
 const {Expresion, TipoDato } = require('../Abstracto/Expresion.js');
 const { errores } = require('../Errores/ListErrores.js');
 const  Error = require('../Errores/Error.js');
-const { NodoArbol } = require('../Simbolo/NodoArbol.js');
+const NodoArbol = require('../Simbolo/NodoArbol.js');
 
 class Cast extends Expresion{
     constructor(tipo, exp, fila, columna){
@@ -9,17 +9,8 @@ class Cast extends Expresion{
         this.exp = exp;
         this.tipo = tipo;
     }
-    /*
-    casteos:
-        ● int a double
-        ● double a int
-        ● int a string
-        ● int a char
-        ● double a string
-        ● char a int
-        ● char a double
-    */
    ejecutar(entorno){
+        console.log("CAST");
         let valor = this.exp.ejecutar(entorno);
         switch(this.tipo){
             case TipoDato.ENTERO:
@@ -64,9 +55,10 @@ class Cast extends Expresion{
     getNodo(){
         let nodo = new NodoArbol("CAST");
         nodo.agregarHijo("(");
+        nodo.agregarHijoArbol(this.exp.getNodo());
+        nodo.agregarHijo("as");
         nodo.agregarHijo(this.tipo);
         nodo.agregarHijo(")");
-        nodo.agregarHijo(this.exp.getNodo());
         return nodo;
     }
 

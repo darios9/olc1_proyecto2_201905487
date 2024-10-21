@@ -1,7 +1,7 @@
 const {Expresion, TipoDato } = require('../Abstracto/Expresion.js');
 const { errores } = require('../Errores/ListErrores.js');
 const  Error = require('../Errores/Error.js');
-const { NodoArbol } = require('../Simbolo/NodoArbol.js');
+const NodoArbol = require('../Simbolo/NodoArbol.js');
 
 class Literal extends Expresion {
     constructor(valor, tipo, fila, columna) {
@@ -38,8 +38,8 @@ class Literal extends Expresion {
         return null;
     }
 
-    getNodo() {
-        let nodo = new NodoArbol("NATIVO");
+    getNodo(){
+        let nodo = new NodoArbol("LITERAL");
         nodo.agregarHijo(this.valor);
         return nodo;
     }

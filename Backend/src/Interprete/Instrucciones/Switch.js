@@ -1,9 +1,10 @@
 const {Instruccion, TipoInstr} = require("../Abstracto/Instrucciones.js");
 const { errores } = require("../Errores/ListErrores.js");
 const Error = require("../Errores/Error.js");
-const { NodoArbol } = require("../Simbolo/NodoArbol.js");
+const  NodoArbol  = require("../Simbolo/NodoArbol.js");
 const { Entorno } = require("../Simbolo/Entorno.js");
 const Break = require("./Break.js");
+const Continuar = require("./Continuar.js");
 
 class Switch extends Instruccion {
     constructor(expresion, casos, defecto, linea, columna) {
@@ -34,12 +35,15 @@ class Switch extends Instruccion {
                 let caso = this.casos[i] ;
                 caso.case.ejecutar(entorno);
                 let expSwitch = caso.case.valor;
-                if (expSwitch == valor) {
+                if (valor === expSwitch) {
                     casoEncontrado = true;
                     let nuevoEntorno = new Entorno(entorno, 'switch');
     
                     for (let j = 0; j < caso.INS.length; j++) {
                         let instruccion = caso.INS[j];
+                        if(instruccion instanceof Continuar){    
+                            return instruccion;
+                        }
                         let res = instruccion.ejecutar(nuevoEntorno);
     
                         if (res instanceof Break) {
@@ -54,6 +58,11 @@ class Switch extends Instruccion {
                     let nuevoEntorno = new Entorno(entorno, 'switch');
                     for (let k = 0; k < caso.INS.length; k++) {
                         let instruccion = caso.INS[k];
+
+                        if(instruccion instanceof Continuar){    
+                            return instruccion;
+                        }
+
                         let res = instruccion.ejecutar(nuevoEntorno);
                         if (res instanceof Break) {
                             return null;
@@ -78,38 +87,42 @@ class Switch extends Instruccion {
 
     getNodo() {
         let nodo = new NodoArbol("SWITCH");
-        nodo.addHijo("switch");
-        nodo.addHijo("(");
-        nodo.addHijo(this.expresion.getNodo());
-        nodo.addHijo(")");
-        nodo.addHijo("{");
-        let nodoCasos = new NodoArbol("CASOS");
+        nodo.agregarHijo("switch");
+        nodo.agregarHijo("(");
+        nodo.agregarHijoArbol(this.expresion.getNodo());
+        nodo.agregarHijo(")");
+        nodo.agregarHijo("{");
         if (typeof this.casos != 'undefined') {
-            for (let i = 0; i < this.casos.length; i++) {
-                let caso = this.casos[i];
+            let nodoCasos = new NodoArbol("CASOS");
+            for (let caso of this.casos) {
                 let nodoCaso = new NodoArbol("CASO");
-                nodoCaso.addHijo("case");
-                nodoCaso.addHijo(caso.case.getNodo());
-                nodoCaso.addHijo(":");
+                nodoCaso.agregarHijo("case");
+                nodoCaso.agregarHijoArbol(caso.case.getNodo());
+                nodoCaso.agregarHijo(":");
                 let nodoInstrucciones = new NodoArbol("INSTRUCCIONES");
-                for (let j = 0; j < caso.INS.length; j++) {
-                    let instruccion = caso.INS[j];
-                    nodoInstrucciones.addHijo(instruccion.getNodo());
+                for (let instr of caso.INS) {
+                    nodoInstrucciones.agregarHijoArbol(instr.getNodo());
                 }
-                nodoCaso.addHijo(nodoInstrucciones);
-                nodoCasos.addHijo(nodoCaso);
+                nodoCaso.agregarHijoArbol(nodoInstrucciones);
+                nodoCasos.agregarHijoArbol(nodoCaso);
             }
+            nodo.agregarHijoArbol(nodoCasos);
         }
-        nodo.addHijo(nodoCasos);
-        let nodoDefecto = new NodoArbol("DEFECTO");
-        for (let i = 0; i < this.defecto.length; i++) {
-            let instruccion = this.defecto[i];
-            nodoDefecto.addHijo(instruccion.getNodo());
+        if (typeof this.defecto != 'undefined') {
+            let nodoDefecto = new NodoArbol("DEFECTO");
+            nodoDefecto.agregarHijo("default");
+            nodoDefecto.agregarHijo(":");
+            let nodoInstrucciones = new NodoArbol("INSTRUCCIONES");
+            for (let instr of this.defecto) {
+                nodoInstrucciones.agregarHijoArbol(instr.getNodo());
+            }
+            nodoDefecto.agregarHijoArbol(nodoInstrucciones);
+            nodo.agregarHijoArbol(nodoDefecto);
         }
-        nodo.addHijo(nodoDefecto);
-        nodo.addHijo("}");
+        nodo.agregarHijo("}");
         return nodo;
     }
+    
 }
 
 module.exports = Switch;

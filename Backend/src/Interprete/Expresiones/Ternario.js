@@ -1,7 +1,7 @@
 const { Expresion, TipoDato } = require("../Abstracto/Expresion.js");
 const { errores } = require("../Errores/ListErrores.js");
 const Error = require("../Errores/Error.js");
-const { NodoArbol } = require("../Simbolo/NodoArbol.js");
+const NodoArbol = require("../Simbolo/NodoArbol.js");
 
 class Ternario extends Expresion {
   constructor(condicion, expre1, expre2, fila, columna) {
@@ -31,11 +31,13 @@ class Ternario extends Expresion {
 
     getNodo() {
         let nodo = new NodoArbol("TERNARIO");
-        nodo.agregarHijo("?");
-        nodo.agregarHijo(this.condicion.getNodo());
+        nodo.agregarHijo("if");
+        nodo.agregarHijo("(");
+        nodo.agregarHijoArbol(this.condicion.getNodo());
+        nodo.agregarHijo(")");
+        nodo.agregarHijoArbol(this.expre1.getNodo());
         nodo.agregarHijo(":");
-        nodo.agregarHijo(this.expre1.getNodo());
-        nodo.agregarHijo(this.expre2.getNodo());
+        nodo.agregarHijoArbol(this.expre2.getNodo());
         return nodo;
     }
 }

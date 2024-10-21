@@ -1,34 +1,47 @@
 const { Expresion, TipoDato } = require("../Abstracto/Expresion");
 const { errores } = require("../Errores/ListErrores");
 const { Error } = require("../Errores/Error");
-const { NodoArbol } = require("../Simbolo/NodoArbol");
+const NodoArbol = require("../Simbolo/NodoArbol");
+const e = require("express");
 
 class NegacionUnaria extends Expresion{
     constructor(negacion, exp, linea, columna){
         super("ERROR", TipoDato.ERROR, linea, columna);
         this.negacion = negacion;
         this.exp = exp;
-        this.linea; 
-        this.columna;
     }
 
     ejecutar(entorno){
         let valor = this.exp.ejecutar(entorno);
-        if(valor.tipo != TipoDato.BOOLEANO){
-            errores.push(new Error('Semántico', 'Tipo de dato no válido', this.linea, this.columna));
-            return null;
+        if(this.exp == null){
+            errores.push(new Error('Semántico', 'Expresión no válida', this.linea, this.columna));
+            return;
+        } 
+        
+        switch(this.negacion){
+            case "-":
+                if(this.exp.tipo == TipoDato.ENTERO){
+                    this.tipo = TipoDato.ENTERO;
+                    this.valor = -this.exp.valor;
+                    return this;
+                }else if(this.exp.tipo == TipoDato.DECIMAL){
+                    this.tipo = TipoDato.DECIMAL;
+                    this.valor = -this.exp.valor;
+                    return this;
+                }else{
+                    errores.push(new Error('Semántico', 'Tipo de dato no válido', this.linea, this.columna));
+                }
+                break;
+            default:
+                errores.push(new Error('Semántico', 'Operador no válido', this.linea, this.columna));
         }
-        if(this.negacion){
-            return !valor.valor;
-        }
-        return valor.valor;
 
     }
 
     getNodo(){
         let nodo = new NodoArbol("NEGACION");
         nodo.agregarHijo("!");
-        nodo.agregarHijo(this.exp.getNodo());
+        nodo.agregarHijoArbol(this.exp.getNodo());
         return nodo;
     }
 }

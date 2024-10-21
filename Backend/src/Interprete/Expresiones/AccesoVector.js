@@ -1,7 +1,7 @@
 const { Expresion, TipoDato } = require('../Abstracto/Expresion.js');
 const { errores } = require('../Errores/ListErrores.js');
 const Error = require('../Errores/Error.js');
-const { NodoArbol } = require('../Simbolo/NodoArbol.js');
+const NodoArbol  = require('../Simbolo/NodoArbol.js');
 const e = require('express');
 
 class AccesoVector extends Expresion {
@@ -13,9 +13,9 @@ class AccesoVector extends Expresion {
     }
 
    ejecutar(entorno) {
-        let vector = entorno.buscarVector(this.id);
         let vector2 = entorno.getVector(this.id);
-        if(vector){
+        this.exp.ejecutar(entorno);
+        if(vector2){
             if (this.exp === null && this.exp2 === null) {
                 errores.push(new Error('Semántico', 'Se esperaba una expresión', this.fila, this.columna));
                 return null;
@@ -30,6 +30,7 @@ class AccesoVector extends Expresion {
                     errores.push(new Error('Semántico', 'Indice fuera de rango', this.fila, this.columna));
                     return null;
                 }
+                this.tipo = vector2.tipo;
                 this.valor = vector2.valores[this.exp.valor];
                 return vector2.valores[this.exp.valor];
             } else {
@@ -43,6 +44,7 @@ class AccesoVector extends Expresion {
                     errores.push(new Error('Semántico', 'Indice fuera de rango', this.fila, this.columna));
                     return null;
                 }
+                this.tipo = vector2.tipo;
                 this.valor = vector2.valores[this.exp.valor][this.exp2.valor];
                 return vector2.valores[this.exp.valor][this.exp2.valor];
             }
@@ -54,12 +56,12 @@ class AccesoVector extends Expresion {
         nodo.agregarHijo(this.id);
         if (this.exp != null) {
             nodo.agregarHijo("[");
-            nodo.agregarHijo(this.exp.getNodo());
+            nodo.agregarHijoArbol(this.exp.getNodo());
             nodo.agregarHijo("]");
         }
         if (this.exp2 != null) {
             nodo.agregarHijo("[");
-            nodo.agregarHijo(this.exp2.getNodo());
+            nodo.agregarHijoArbol(this.exp2.getNodo());
             nodo.agregarHijo("]");
         }
         return nodo;

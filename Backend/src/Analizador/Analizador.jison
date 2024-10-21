@@ -15,6 +15,11 @@
     const Cast = require('../Interprete/Expresiones/Cast.js');
     const IncrementoDecremento = require('../Interprete/Expresiones/IncrementoDecremento.js');
     const AccesoVector = require('../Interprete/Expresiones/AccesoVector.js');
+    const Call = require('../Interprete/Expresiones/Call.js');
+    const Return = require('../Interprete/Expresiones/Return.js');
+    const Nativas = require('../Interprete/Expresiones/Nativas.js');
+    const Len = require('../Interprete/Expresiones/Len.js');
+    const FunIs = require('../Interprete/Expresiones/FunIs.js');
 
     //importaciones de instrucciones
     const Imprimir = require('../Interprete/Instrucciones/Print.js');
@@ -27,6 +32,11 @@
     const Break = require('../Interprete/Instrucciones/Break.js');
     const While = require('../Interprete/Instrucciones/While.js');
     const For = require('../Interprete/Instrucciones/For.js');
+    const DoWhile = require('../Interprete/Instrucciones/DoWhile.js');
+    const Loop = require('../Interprete/Instrucciones/Loop.js');
+    const Continuar = require('../Interprete/Instrucciones/Continuar.js');
+    const Funcion = require('../Interprete/Instrucciones/Funcion.js');
+    const Ejecutar = require('../Interprete/Instrucciones/Ejecutar.js');
 
 %}
 
@@ -65,7 +75,6 @@
 <Cadena>["]         {yytext = Texto; this.popState(); return 'Cadena';}
 
 "echo"                 return "PRINT";
-"PRINTLN"               return "PRINTLN";
 ";"                     return "PTCOMA";
 ":"                     return "DOSPT"
 "."                     return "PT";
@@ -85,6 +94,7 @@
 "/"                     return "DIV";
 "%"                     return "MOD";
 "^"                     return "ELEV";
+"$"                     return "RAIZ";
 "!="                    return "DIFERENTE";
 "=="                    return "IIGUAL";
 ">="                    return "MAYORIGUAL";
@@ -116,6 +126,8 @@
 "SWITCH"                return "SWITCH";
 "IF"                    return "IF";
 "ELSE"                  return "ELSE";
+"LOOP"                  return "LOOP";
+"WHILE"                 return "WHILE";
 "NEW"                   return "NEW";
 "RETURN"                return "RETURN";
 "CONTINUE"              return "CONTINUE";
@@ -125,17 +137,21 @@
 "CASE"                  return "CASE";
 "DEFAULT"               return "DEFAULT";
 "VOID"                  return "VOID";
-"toLOWER"               return "LOWER";
-"toUPPER"               return "UPPER";
-"Length"                return "LENGTH";
-"Truncate"              return "TRUNCATE";
-"Round"                 return "ROUND";
+"LOWER"                 return "LOWER";
+"UPPER"                 return "UPPER";
+"Len"                   return "LENGTH";
+"truncate"              return "TRUNCATE";
+"round"                 return "ROUND";
 "Typeof"                return "TYPEOF";
 "toSTRING"              return "TOSTRING";
 "toCharArray"           return "CHARARRAY";
-"RUN"                  return "RUN";
+"EJECUTAR"              return "EJECUTAR";
 "CAST"                  return "CAST";
 "AS"                    return "AS";
+"IS"                    return "IS";
+"REVERSE"               return "REVERSE";
+"MAX"                   return "MAX";
+"FUNCTION"              return "FUNCTION";
 
 
 
@@ -157,11 +173,11 @@
 %left 'DOSPT'
 %left 'OR'
 %left 'AND'
-%right 'NOT'
+%right 'NOT' 'IS'
 %left 'IIGUAL' 'DIFERENTE' 'MENOR' 'MENORIGUAL' 'MAYOR' 'MAYORIGUAL'
 %left 'MAS' 'MENOS'
 %left 'POR' 'DIV' 'MOD'
-%left 'ELEV'
+%left 'ELEV' 'RAIZ'
 %right UMENOS
 %right FCAST
 %left 'PLUS','MIN'
@@ -172,7 +188,9 @@
 
 INIT
     : LINS EOF      {return $1;}
-    ;
+;
+
+
 
 LINS
     :LINS INS       {$1.push($2); $$=$1;}
@@ -181,22 +199,34 @@ LINS
 
 INS
     : IMPRIMIR PTCOMA { $$ = $1; }
+    | FEJECUTAR PTCOMA { $$ = $1; }
     | DECLARACION PTCOMA { $$ = $1; }
     | ASIGNACION PTCOMA { $$ = $1; }
     | DTERNARIO PTCOMA { $$ = $1; }
     | FFOR { $$ = $1; }
+    | FWHILE { $$ = $1; }
     | INCREMENTO PTCOMA { $$ = $1; }
     | DECREMENTO PTCOMA { $$ = $1; }
     | FIF { $$ = $1; }
     | FSWITCH { $$ = $1; }
     | FBREAK { $$ = $1; }
-    | FWHILE { $$ = $1; }
+    | FCONTINUE { $$ = $1; }
+    | DOWHILE PTCOMA { $$ = $1; }
+    | FLOOP { $$ = $1; }
+    | FRETURN { $$ = $1; }
+    | LLAMADA PTCOMA { $$ = $1; }
+    | FFUNCION { $$ = $1; }
     |error    { errores.push(new Error("Error Sintactico", `Error Sintactico, caracter '${yytext}' no esperado.`, this._$.first_line, this._$.first_column));   
         console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); }
 ;
 
+FEJECUTAR
+    : EJECUTAR ID PARIZ PARDER  { $$ = new Ejecutar($2, [], this._$.first_line, this._$.first_column); }
+    | EJECUTAR ID PARIZ PARAMETROS PARDER  { $$ = new Ejecutar($2, $4, this._$.first_line, this._$.first_column); }
+;
+
 DECLARACION
-    : LET LID DOSPT TIPODATO   { $$ = new DecVariable($1, $4, $2, null, $3,this._$.first_line, this._$.first_column); }
+    : LET LID DOSPT TIPODATO   {console.log("los mejores"); $$ = new DecVariable($1, $4, $2, null, $3,this._$.first_line, this._$.first_column); }
     | LET LID DOSPT TIPODATO IGUAL EXP { $$ = new DecVariable($1, $4, $2, $6, $3,this._$.first_line, this._$.first_column); }
     | CONST LID DOSPT TIPODATO IGUAL EXP { $$ = new DecVariable($1, $4, $2, $6, $3,this._$.first_line, this._$.first_column); }
     | CONST LID DOSPT TIPODATO { $$ = new DecVariable($1, $4, $2, null, $3,this._$.first_line, this._$.first_column); }
@@ -221,14 +251,18 @@ IMPRIMIR
 ; 
 
 FIF 
-    : IF PARIZ EXP PARDER LLAVEIZ LINS LLAVEDER { $$ = new If($3, $6, this._$.first_line, this._$.first_column); }
-    | IF PARIZ EXP PARDER LLAVEIZ LINS LLAVEDER ELSE FIF { $$ = new If($3, $6, undefined , $9, this._$.first_line, this._$.first_column); }
-    | IF PARIZ EXP PARDER LLAVEIZ LINS LLAVEDER ELSE LLAVEIZ LINS LLAVEDER { $$ = new If($3, $6, $10, this._$.first_line, this._$.first_column); }
+    : IF PARIZ EXP PARDER LLAVEIZ LINS LLAVEDER { $$ = new If($3, $6, undefined, undefined, this._$.first_line, this._$.first_column); }
+    | IF PARIZ EXP PARDER LLAVEIZ  LLAVEDER { $$ = new If($3, undefined, undefined, undefined, this._$.first_line, this._$.first_column); }
+    | IF PARIZ EXP PARDER LLAVEIZ LINS LLAVEDER ELSE FIF { $$ = new If($3, $6 , undefined, $9, this._$.first_line, this._$.first_column); }
+    | IF PARIZ EXP PARDER LLAVEIZ LINS LLAVEDER ELSE LLAVEIZ LINS LLAVEDER { $$ = new If($3, $6, $10, undefined, this._$.first_line, this._$.first_column); }
+    | IF PARIZ EXP PARDER LLAVEIZ LLAVEDER ELSE LLAVEIZ LLAVEDER { $$ = new If($3, undefined, undefined, undefined, this._$.first_line, this._$.first_column); }
+
 ;
 
 FWHILE
     : WHILE PARIZ EXP PARDER LLAVEIZ LINS LLAVEDER { $$ = new While($3, $6, this._$.first_line, this._$.first_column); }
-;
+    | WHILE PARIZ EXP PARDER LLAVEIZ LLAVEDER { $$ = new While($3, undefined, this._$.first_line, this._$.first_column); }
+    ;
 
 FSWITCH
     : SWITCH PARIZ EXP PARDER LLAVEIZ LCASES DEFAULT DOSPT LINS LLAVEDER { $$ = new Switch($3, $6, $9, this._$.first_line, this._$.first_column); }
@@ -247,6 +281,10 @@ FBREAK
     : BREAK PTCOMA { $$ = new Break(this._$.first_line, this._$.first_column); }
 ;
 
+FCONTINUE
+    : CONTINUE PTCOMA {  $$ = new Continuar(this._$.first_line, this._$.first_column); }
+;
+
 FFOR
     :FOR PARIZ DECLARACION PTCOMA EXP PTCOMA ACTUALIZACION LLAVEIZ LINS LLAVEDER { $$ = new For($3, $5, $7, $9, this._$.first_line, this._$.first_column); }
     |FOR PARIZ ASIGNACION PTCOMA EXP PTCOMA ACTUALIZACION LLAVEIZ LLAVEDER { $$ = new For($3, $5, $7, $9, this._$.first_line, this._$.first_column); }
@@ -258,9 +296,53 @@ ACTUALIZACION
     |INCREMENTO PARDER { $$ = $1; }
     |DECREMENTO PARDER{ $$ = $1; }
 ;
+FLOOP
+    :LOOP LLAVEIZ LINS LLAVEDER { $$ = new Loop($3, this._$.first_line, this._$.first_column); }
+;
 
 DOWHILE
-    : DO LLAVEIZ LINS LLAVEDER UNTIL PARIZ EXP PARDER PTCOMA { $$ = new DoWhile($3, $7, this._$.first_line, this._$.first_column); }
+    : DO LLAVEIZ LINS LLAVEDER UNTIL PARIZ EXP PARDER { $$ = new DoWhile($3, $7, this._$.first_line, this._$.first_column); }
+    | DO LLAVEIZ  LLAVEDER UNTIL PARIZ EXP PARDER { $$ = new DoWhile(undefined, $7, this._$.first_line, this._$.first_column); }
+;
+
+FRETURN
+    : RETURN EXP PTCOMA { $$ = new Return($2, this._$.first_line, this._$.first_column); }
+    | RETURN PTCOMA { $$ = new Return(undefined, this._$.first_line, this._$.first_column); }
+;
+
+LLAMADA
+    : ID PARIZ PARAMETROS_2 PARDER { $$ = new Call($1, $3, this._$.first_line, this._$.first_column); }
+    | ID PARIZ PARDER { $$ = new Call($1, [], this._$.first_line, this._$.first_column); }
+;
+
+FFUNCION
+    : FUNCTION TIPODATO ID PARIZ PARAMETROS PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion($2, $3, $5, $8, this._$.first_line, this._$.first_column); }
+    | FUNCTION VOID ID PARIZ PARAMETROS PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion(TipoDato.VOID, $3, $5, $8, this._$.first_line, this._$.first_column); }
+    | FUNCTION TIPODATO ID PARIZ PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion($2, $3, [], $7, this._$.first_line, this._$.first_column); }
+    | FUNCTION VOID ID PARIZ PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion(TipoDato.VOID, $3, [], $7, this._$.first_line, this._$.first_column); }
+
+;
+
+PARAMETROS
+    :PARAMETROS COMA PARAMETRO { $$ = $1; $$.push($3); }
+    |PARAMETRO { $$ = [$1]; }
+;
+
+PARAMETRO
+    :ID DOSPT TIPODATO IGUAL EXP { $$ = {id: $1, tipo: $3, valor: $4}; }
+    |ID DOSPT TIPODATO { $$ = {id: $1, tipo: $3, valor: undefined}; }
+;
+
+PARAMETROS_2
+    :PARAMETROS_2 COMA PARAMRO_2 { $$ = $1; $$.push($3); }
+    |PARAMRO_2 { $$ = [$1]; }
+
+;
+
+PARAMRO_2
+    :ID IGUAL EXP { $$ = {id: $1, valor: $3}; }
+
+;
 
 
 EXP 
@@ -268,7 +350,9 @@ EXP
     | EXP MENOS EXP         {$$ = new Arithmetica($1, "-", $3, this._$.first_line, this._$.first_column);}
     | EXP POR EXP           {$$ = new Arithmetica($1, "*", $3, this._$.first_line, this._$.first_column);}
     | EXP DIV EXP           {$$ = new Arithmetica($1, "/", $3, this._$.first_line, this._$.first_column);}
+    | EXP MOD EXP           {$$ = new Arithmetica($1, "%", $3, this._$.first_line, this._$.first_column);}
     | EXP ELEV EXP          {$$ = new Arithmetica($1, "^", $3, this._$.first_line, this._$.first_column);}
+    | EXP RAIZ EXP          {$$ = new Arithmetica($1, "$", $3, this._$.first_line, this._$.first_column);}
     | EXP AND EXP           {$$ = new OpLogicos($1, $3, "&&", this._$.first_line, this._$.first_column);}
     | EXP OR EXP            {$$ = new OpLogicos($1, $3, "||", this._$.first_line, this._$.first_column);}
     | NOT EXP               {$$ = new OpLogicos(null, $2, "!", this._$.first_line, this._$.first_column);}
@@ -286,7 +370,10 @@ EXP
     | F                     {$$ = $1;}
     |ID CORIZ EXP CORDER    { $$ = new AccesoVector($1, $3, null, this._$.first_line, this._$.first_column); }
     |ID CORIZ EXP CORDER CORIZ EXP CORDER { $$ = new AccesoVector($1, $3, $6, this._$.first_line, this._$.first_column); }
-    | MENOS EXP %prec UMENOS{$$ = new NegacionUnaria($2, this._$.first_line, this._$.first_column);}
+    |LLAMADA                { $$ = $1; }
+    |PARIZ EXP PARDER       { $$ = $2; }
+    |FNATIVAS               { $$ = $1; }
+    | MENOS EXP %prec UMENOS{$$ = new NegacionUnaria("-", $2, this._$.first_line, this._$.first_column); }
 ;
 
 TIPODATO
@@ -317,9 +404,12 @@ DTERNARIO
     : IF PARIZ EXP PARDER EXP DOSPT EXP  { $$ = new Ternario($3, $5, $7, this._$.first_line, this._$.first_column); }
 
 ;
+
 CASTEOS
-    : CAST PARIZ EXP AS TIPODATO PARDER { $$ = new Cast($5, $3, this._$.first_line, this._$.first_column); }
+    : CAST PARIZ EXP AS TIPODATO PARDER %prec FCAST { $$ = new Cast($5, $3, this._$.first_line, this._$.first_column); }
 ;
+
+
 INCREMENTO
     : EXP PLUS { $$ = new IncrementoDecremento($1, "++", this._$.first_line, this._$.first_column); }
 ;
@@ -338,3 +428,17 @@ F
 |ID {   $$ = new Acceso($1, @1.first_line, @1.first_column); }
 ;
 
+FNATIVAS
+    :LOWER PARIZ EXP PARDER { $$ = new Nativas("LOWER", $3, this._$.first_line, this._$.first_column); }
+    |UPPER PARIZ EXP PARDER { $$ = new Nativas("UPPER", $3, this._$.first_line, this._$.first_column); }
+    |LENGTH PARIZ ID PARDER { $$ = new Len("LEN",$3, this._$.first_line, this._$.first_column); }
+    |TRUNCATE PARIZ EXP PARDER { $$ = new Nativas("TRUNCATE", $3, this._$.first_line, this._$.first_column); }
+    |ROUND PARIZ EXP PARDER { $$ = new Nativas("ROUND", $3, this._$.first_line, this._$.first_column); }
+    |EXP IS TIPODATO { $$ = new FunIs($3, $1, this._$.first_line, this._$.first_column); }
+    |TOSTRING PARIZ EXP PARDER { $$ = new FuncionNativa("TOSTRING", $3, this._$.first_line, this._$.first_column); }
+    |CHARARRAY PARIZ EXP PARDER { $$ = new FuncionNativa("TOCHARARRAY", $3, this._$.first_line, this._$.first_column); }
+    |REVERSE PARIZ EXP PARDER { $$ = new Len("REVERSE",$3, this._$.first_line, this._$.first_column); }
+    |MAX PARIZ EXP PARDER { $$ = new Len("MAX",$3, this._$.first_line, this._$.first_column); }
+   
+
+;

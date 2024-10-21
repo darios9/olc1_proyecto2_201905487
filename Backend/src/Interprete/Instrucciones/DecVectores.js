@@ -1,8 +1,9 @@
 const { Instruccion, TipoInstr } = require("../Abstracto/Instrucciones.js");
 const { errores } = require("../Errores/ListErrores.js");
 const Error = require("../Errores/Error.js");
-const { NodoArbol } = require("../Simbolo/NodoArbol.js");
+const NodoArbol = require("../Simbolo/NodoArbol.js");
 const SimVector = require("../Simbolo/SimVector.js");
+
 
 class DecVectores extends Instruccion {
   constructor(id, tipo, linea, columna, ...exp) {
@@ -139,32 +140,52 @@ class DecVectores extends Instruccion {
     return null;
   }
 
-    getNodo() {
-        let nodo = new NodoArbol("DECLARAR VECTOR");
-        nodo.agregarHijo(this.tipo);
-        nodo.agregarHijo(this.id);
-        if (this.data !== undefined) {
-        let nodoData = new NodoArbol("TAMAÑO");
-        nodoData.agregarHijo(this.data.getNodo());
-        nodo.agregarHijo(nodoData);
-        } else if (this.data1 !== undefined && this.data2 !== undefined) {
-        let nodoData1 = new NodoArbol("FILA");
-        nodoData1.agregarHijo(this.data1.getNodo());
-        nodo.agregarHijo(nodoData1);
-        let nodoData2 = new NodoArbol("COLUMNA");
-        nodoData2.agregarHijo(this.data2.getNodo());
-        nodo.agregarHijo(nodoData2);
-        } else if (this.lista !== undefined) {
-        let nodoData = new NodoArbol("VALORES");
-        nodoData.agregarHijo(this.lista.getNodo());
-        nodo.agregarHijo(nodoData);
-        } else if (this.listaDeListas !== undefined) {
-        let nodoData = new NodoArbol("VALORES");
-        nodoData.agregarHijo(this.listaDeListas.getNodo());
-        nodo.agregarHijo(nodoData);
+  getNodo() {
+    let nodo = new NodoArbol("DECLARACION VECTOR");
+    nodo.agregarHijo("let");
+    nodo.agregarHijo(this.id);
+    nodo.agregarHijo(":");
+    nodo.agregarHijo(this.tipo);
+    if (this.data !== undefined) {
+      nodo.agregarHijo("=");
+      nodo.agregarHijoArbol(this.data.getNodo());
+    } else if (this.data1 !== undefined && this.data2 !== undefined) {
+      nodo.agregarHijo("=");
+      nodo.agregarHijo("[");
+      nodo.agregarHijoArbol(this.data1.getNodo());
+      nodo.agregarHijo(",");
+      nodo.agregarHijoArbol(this.data2.getNodo());
+      nodo.agregarHijo("]");
+    } else if (this.lista !== undefined) {
+      nodo.agregarHijo("=");
+      nodo.agregarHijo("[");
+      for (let i = 0; i < this.lista.length; i++) {
+        nodo.agregarHijoArbol(this.lista[i].getNodo());
+        if (i < this.lista.length - 1) {
+          nodo.agregarHijo(",");
         }
-        return nodo;
+      }
+      nodo.agregarHijo("]");
+    } else if (this.listaDeListas !== undefined) {
+      nodo.agregarHijo("=");
+      nodo.agregarHijo("[");
+      for (let i = 0; i < this.listaDeListas.length; i++) {
+        nodo.agregarHijo("[");
+        for (let j = 0; j < this.listaDeListas[i].length; j++) {
+          nodo.agregarHijoArbol(this.listaDeListas[i][j].getNodo());
+          if (j < this.listaDeListas[i].length - 1) {
+            nodo.agregarHijo(",");
+          }
+        }
+        nodo.agregarHijo("]");
+        if (i < this.listaDeListas.length - 1) {
+          nodo.agregarHijo(",");
+        }
+      }
+      nodo.agregarHijo("]");
     }
+    return nodo;
+  }
 }
 
 module.exports = DecVectores;

@@ -27,6 +27,9 @@ const TipoInstr = {
     TERNARIO: 'TERNARIO',
     VECTORES: 'VECTORES',
     ERROR: 'ERROR',
+    FUNCION: 'FUNCION',
+    LLAMADA: 'LLAMADA',
+    EJECUTAR: 'EJECUTAR',
 }
 
 module.exports = {Instruccion, TipoInstr}

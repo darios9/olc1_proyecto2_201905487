@@ -1,7 +1,7 @@
 const {Expresion, TipoDato} = require('../Abstracto/Expresion.js');
 const {errores} = require('../Errores/ListErrores.js');
 const Error = require('../Errores/Error.js');
-const { NodoArbol } = require('../Simbolo/NodoArbol.js');
+const NodoArbol = require('../Simbolo/NodoArbol.js');
 
 class OpLogicos extends Expresion {
     constructor(izq, der, operador, fila, columna) {
@@ -52,9 +52,9 @@ class OpLogicos extends Expresion {
 
     getNodo() {
         let nodo = new NodoArbol("LOGICO");
-        nodo.agregarHijo(this.izq.getNodo());
+        nodo.agregarHijoArbol(this.izq.getNodo());
         nodo.agregarHijo(this.operador);
-        nodo.agregarHijo(this.der.getNodo());
+        nodo.agregarHijoArbol(this.der.getNodo());
         return nodo;
     }
 }

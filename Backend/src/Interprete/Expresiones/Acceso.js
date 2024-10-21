@@ -1,7 +1,7 @@
 const {Expresion, TipoDato } = require('../Abstracto/Expresion.js');
 const { errores } = require('../Errores/ListErrores.js');
 const  Error = require('../Errores/Error.js');
-const { NodoArbol } = require('../Simbolo/NodoArbol.js');
+const  NodoArbol  = require('../Simbolo/NodoArbol.js');
 
 class Acceso extends Expresion {
     constructor(id, fila, columna) {

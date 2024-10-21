@@ -1,7 +1,7 @@
 const { Instruccion, TipoInstr } = require("../Abstracto/Instrucciones.js");
 const { errores } = require("../Errores/ListErrores.js");
 const Error = require("../Errores/Error.js");
-const { NodoArbol } = require("../Simbolo/NodoArbol.js");
+const NodoArbol  = require("../Simbolo/NodoArbol.js");
 const SimVector = require("../Simbolo/SimVector.js");
 
 
@@ -49,20 +49,20 @@ class ModVectores extends Instruccion {
     }
 
     getNodo() {
-        let nodo = new NodoArbol("DECLARAR");
+        let nodo = new NodoArbol("modificar vector");
         nodo.agregarHijo(this.id);
         if(this.exp1 != null){
             nodo.agregarHijo("[");
-            nodo.agregarHijo(this.exp1.getNodo());
+            nodo.agregarHijoArbol(this.exp1.getNodo());
             nodo.agregarHijo("]");
         }
         if(this.exp2 != null){
             nodo.agregarHijo("[");
-            nodo.agregarHijo(this.exp2.getNodo());
+            nodo.agregarHijoArbol(this.exp2.getNodo());
             nodo.agregarHijo("]");
         }
         nodo.agregarHijo("=");
-        nodo.agregarHijo(this.exp3.getNodo());
+        nodo.agregarHijoArbol(this.exp3.getNodo());
         return nodo;
     }
 

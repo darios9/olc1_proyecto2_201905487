@@ -6,6 +6,7 @@ class Entorno {
         this.nombre = nombre;
         this.Variables = new Map();
         this.Vectores = new Map();
+        this.Funciones = new Map();
         this.anterior = anterior;
     }
 
@@ -114,6 +115,63 @@ class Entorno {
         return false;
     }
 
+    // crear metodo para guardar, buscar y obtener una funcion
+    guardarFuncion(id, funcion) {
+        if(!this.buscarFuncion(id)) {
+            this.Funciones.set(id, funcion);
+            return true;
+        }
+        return false;
+    }
+
+    // Busca una funcion en el entorno actual
+    buscarFuncion(id) {
+        for(const entry of Array.from(this.Funciones.entries())) {
+            if(entry[0] === id) {
+                return true;
+            }
+        }
+        return false; 
+    }
+
+    // obtiene una funcion del entorno actual y si no la encuentra busca en el entorno anterior
+    getFuncion(id) {
+        let env = this;
+        while(env != null) {
+            if(env.Funciones.has(id)) {
+                for(const entry of Array.from(env.Funciones.entries())) {
+                    if(entry[0] === id) {
+                        return entry[1];
+                    }
+                }
+            }
+            env = env.anterior;
+        }
+        return null;
+    }
+
+    // obtener entorno global
+    getGlobal() {
+        let env = this;
+        while(env.anterior != null) {
+            env = env.anterior;
+        }
+        return env;
+    }
+
+    guardar(id, tipo, valor, tipoDato, fila, columna){
+        let env = this;
+        while(env != null){
+            if(env.Variables.has(id)){
+                if(env.Variables.has(id)){
+                    env.Variables.set(id, new Simbolo(id, tipo, valor, tipoDato, fila, columna));
+                    return ;
+                }
+            }
+            env = env.anterior;
+        }
+        this.Variables.set(id, new Simbolo(id, tipo, valor, tipoDato, fila, columna));
+    }
 
 
     

@@ -1,7 +1,7 @@
 const {Expresion, TipoDato} = require('../Abstracto/Expresion.js');
 const {errores} = require('../Errores/ListErrores.js');
 const Error = require('../Errores/Error.js');
-const { NodoArbol } = require('../Simbolo/NodoArbol.js');
+const  NodoArbol = require('../Simbolo/NodoArbol.js');
 
 class IncrementoDecremento extends Expresion {
     constructor(id, operador, fila, columna) {
@@ -37,7 +37,7 @@ class IncrementoDecremento extends Expresion {
 
     getNodo() {
         let nodo = new NodoArbol("INCREMENTO/DECREMENTO");
-        nodo.agregarHijo(this.id);
+        nodo.agregarHijoArbol(this.id.getNodo());
         nodo.agregarHijo(this.operador);
         return nodo;
     }

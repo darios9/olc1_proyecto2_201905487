@@ -1,7 +1,7 @@
 const {Expresion, TipoDato } = require('../Abstracto/Expresion.js');
 const { errores } = require('../Errores/ListErrores.js');
 const  Error = require('../Errores/Error.js');
-const { NodoArbol } = require('../Simbolo/NodoArbol.js');
+const NodoArbol = require('../Simbolo/NodoArbol.js');
 const e = require('express');
 
 class OpRelacioneles extends Expresion {
@@ -15,6 +15,7 @@ class OpRelacioneles extends Expresion {
     ejecutar(entorno) {
         let izq = this.izq.ejecutar(entorno);
         let der = this.der.ejecutar(entorno);
+       
         if (this.izq.tipo === TipoDato.ERROR || this.der.tipo === TipoDato.ERROR) {
             errores.push(new Error('Semántico', 'Error en la operación relacional', this.fila, this.columna));
             return null;
@@ -23,7 +24,7 @@ class OpRelacioneles extends Expresion {
             return null;
         }
 
-        console.log("Operador relacional: "+this.operador + " izq: "+this.izq.valor + " der: "+this.der.valor + " tipo: "+this.izq.tipo + " tipo: "+this.der.tipo);
+      
         switch (this.operador) {
             case "==":
                 if(this.izq.tipo === TipoDato.ENTERO && this.der.tipo === TipoDato.ENTERO){
@@ -129,7 +130,6 @@ class OpRelacioneles extends Expresion {
             case ">":
                 if(this.izq.tipo === TipoDato.ENTERO && this.der.tipo === TipoDato.ENTERO){
                     this.valor = this.izq.valor > this.der.valor;
-                    console.log("Valor: "+this.valor);
                 }else if(this.izq.tipo === TipoDato.ENTERO && this.der.tipo === TipoDato.DOUBLE){
                     this.valor = this.izq.valor > this.der.valor;
                 }else if(this.izq.tipo === TipoDato.ENTERO && this.der.tipo === TipoDato.CHAR){
@@ -138,7 +138,6 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor > this.der.valor;
                 }else if(this.izq.tipo === TipoDato.DOUBLE && this.der.tipo === TipoDato.DOUBLE){
                     this.valor = this.izq.valor > this.der.valor;
-                    console.log("Valor: >"+this.valor);
                 }else if(this.izq.tipo === TipoDato.DOUBLE && this.der.tipo === TipoDato.ENTERO){
                     this.valor = this.izq.valor > this.der.valor;
                 }else if(this.izq.tipo === TipoDato.DOUBLE && this.der.tipo === TipoDato.CHAR){
@@ -347,9 +346,9 @@ class OpRelacioneles extends Expresion {
 
     getNodo() {
         let nodo = new NodoArbol("RELACIONAL");
-        nodo.agregarHijo(this.izq.getNodo());
+        nodo.agregarHijoArbol(this.izq.getNodo());
         nodo.agregarHijo(this.operador);
-        nodo.agregarHijo(this.der.getNodo());
+        nodo.agregarHijoArbol(this.der.getNodo());
         return nodo;
     }
 }

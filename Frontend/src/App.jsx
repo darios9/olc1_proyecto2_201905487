@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { oneDarkTheme } from '@codemirror/theme-one-dark';
 import { javaLanguage } from '@codemirror/lang-java';
+import fileDownload from 'js-file-download';
 import './App.css';
 
 
@@ -17,7 +18,7 @@ function App() {
     setCode(value);
   }, []);
 
-  console.log("estaba en la disco pereando "+code);
+  
   const handleClick = () => {
     fetch('http://localhost:3000/Analyzer', {
         headers: {
@@ -49,7 +50,7 @@ function App() {
     console.log();
     console.log(ast);
 
-    //fileDownload(cst, "cst.dot");
+    fileDownload(cst, "cst.dot");
     fileDownload(ast, "ast.dot");
     
   }

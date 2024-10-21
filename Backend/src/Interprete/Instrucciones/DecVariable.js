@@ -3,6 +3,7 @@ const { TipoDato } = require("../Abstracto/Expresion.js");
 const Error = require("../Errores/Error.js")
 const {errores}  = require("../Errores/ListErrores.js")
 const Simbolo = require("../Simbolo/Simbolo.js");
+const NodoArbol = require("../Simbolo/NodoArbol.js");
 
 class DecVariable extends Instruccion{
 
@@ -40,6 +41,23 @@ class DecVariable extends Instruccion{
         return null;
        
     }
+
+    getNodo(){
+        let nodo = new NodoArbol("DECLARACION");
+        nodo.agregarHijo(this.tipoVar.toString());
+        for(let i = 0; i < this.id.length; i++){
+            nodo.agregarHijo(this.id[i].toString());
+        }
+        nodo.agregarHijo(":");
+        nodo.agregarHijo(this.tipo.toString());
+        if(this.exp != null){
+            nodo.agregarHijo("=");
+            nodo.agregarHijoArbol(this.exp.getNodo());
+        }
+        return nodo;
+    }
+
+    
 
     
 }

@@ -9,6 +9,10 @@ const analizador = require('./Analizador/Analizador.js');
 const {Entorno} = require('./Interprete/Simbolo/Entorno');
 const Singlenton = require('./Interprete/Singlenton/Singlenton');
 const { Instruccion } = require('./Interprete/Abstracto/Instrucciones.js');
+const Funcion  = require('./Interprete/Instrucciones/Funcion.js');
+const Ejecutar = require('./Interprete/Instrucciones/Ejecutar.js');
+const NodoArbol = require('./Interprete/Simbolo/NodoArbol.js');
+const graficarArbol = require('./Interprete/Graficar.js');
 
 // Crea una aplicación Express
 const app = express();
@@ -31,25 +35,43 @@ app.post('/Analyzer', (req, res) => {
   try {
     let ent = new Entorno(null, 'global');
     let sing = Singlenton.getInstance();
+    let Inicio = new NodoArbol("INICIO");
+    let instruc = new NodoArbol("INSTRUCCIONES");
     sing.clearConsola();
     clearErrores();
     sing.clearErrores();
     sing.addError(errores);
-    
-
+  
     let result = analizador.parse(code);
-    
+
     for (const instr of result) {
       try {
-        if(instr instanceof Instruccion){
+        if(instr instanceof Funcion){
           instr.ejecutar(ent);
+          instruc.agregarHijoArbol(instr.getNodo());
         }
       } catch (error) {
         console.error(error);
       }
     }
+    // segunda pasada para el resto de instrucciones
+    for (const instr of result) {
+      if(instr instanceof Funcion){
+        continue;
+      }
+      try {
+        instr.ejecutar(ent);
+        instruc.agregarHijoArbol(instr.getNodo());
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
     
-    res.status(200).json({console: sing.getConsola()});
+
+    Inicio.agregarHijoArbol(instruc);
+  
+    res.status(200).json({console: sing.getConsola(), ast: graficarArbol(Inicio)});
     console.log("********** Consola **********");
     console.log(sing.getConsola());
     console.log("********** Errores **********");

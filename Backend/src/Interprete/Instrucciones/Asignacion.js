@@ -3,6 +3,7 @@ const { TipoDato } = require("../Abstracto/Expresion.js");
 const Error = require("../Errores/Error.js")
 const {errores}  = require("../Errores/ListErrores.js")
 const Simbolo = require("../Simbolo/Simbolo.js");
+const NodoArbol = require("../Simbolo/NodoArbol.js");
 
 class Asignacion extends Instruccion{
     constructor(id, exp, linea, columna){
@@ -19,7 +20,6 @@ class Asignacion extends Instruccion{
             if(sim.tipoDato == "let"){
                 
                 if(sim.tipo == this.exp.tipo){
-                    
                     entorno.actualizar_variable(this.id, this.exp.valor);
                 }else{
                     errores.push(new Error("Semántico", "Error de tipos en la asignación", this.fila, this.columna));
@@ -37,7 +37,7 @@ class Asignacion extends Instruccion{
         let nodo = new NodoArbol("ASIGNACION");
         nodo.agregarHijo(this.id);
         nodo.agregarHijo("=");
-        nodo.agregarHijo(this.exp.getNodo());
+        nodo.agregarHijoArbol(this.exp.getNodo());
         return nodo;
     }
 
