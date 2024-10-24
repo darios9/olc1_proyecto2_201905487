@@ -38,6 +38,7 @@ class Switch extends Instruccion {
                 if (valor === expSwitch) {
                     casoEncontrado = true;
                     let nuevoEntorno = new Entorno(entorno, 'switch');
+                    entorno.guardarSubAmbito(nuevoEntorno);
     
                     for (let j = 0; j < caso.INS.length; j++) {
                         let instruccion = caso.INS[j];
@@ -49,6 +50,12 @@ class Switch extends Instruccion {
                         if (res instanceof Break) {
                             return null;
                         }
+                        if(res instanceof Return){
+                            return res;
+                        }
+                        if(res instanceof Continuar){
+                            return res;
+                        }
                         sinBreak = true;
                         
                     }
@@ -56,6 +63,7 @@ class Switch extends Instruccion {
                 }
                 if(sinBreak){
                     let nuevoEntorno = new Entorno(entorno, 'switch');
+                    entorno.guardarSubAmbito(nuevoEntorno);
                     for (let k = 0; k < caso.INS.length; k++) {
                         let instruccion = caso.INS[k];
 
@@ -75,11 +83,18 @@ class Switch extends Instruccion {
 
         if (!casoEncontrado ) {
             let nuevoEntorno = new Entorno(entorno, 'switch');
+            entorno.guardarSubAmbito(nuevoEntorno);
             for (let i = 0; i < this.defecto.length; i++) {
                 let instruccion = this.defecto[i];
                 let res = instruccion.ejecutar(nuevoEntorno);
                 if (res instanceof Break) {
                     return null;
+                }
+                if(res instanceof Return){
+                    return res;
+                }
+                if(res instanceof Continuar){
+                    return res;
                 }
             }
         }

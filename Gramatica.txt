@@ -1,0 +1,169 @@
+<init> ::= <lins> EOF ;
+
+<lins> ::= <lins> <ins> | <ins> ;
+
+<ins> ::= <imprimir> PTCOMA
+        | <fejecutar> PTCOMA
+        | <declaracion> PTCOMA
+        | <asignacion> PTCOMA
+        | <dternario> PTCOMA
+        | <ffor>
+        | <fwhile>
+        | <incremento> PTCOMA
+        | <decremento> PTCOMA
+        | <fif>
+        | <fswitch>
+        | <fbreak> PTCOMA
+        | <fcontinue> PTCOMA
+        | <dowhile> PTCOMA
+        | <floop>
+        | <freturn> PTCOMA
+        | <ffuncion>
+        | <llamada> PTCOMA
+        | error ;
+
+<fejecutar> ::= EJECUTAR <llamada> ;
+
+<declaracion> ::= LET <lid> DOSPT <tipodato>
+                | LET <lid> DOSPT <tipodato> IGUAL <exp>
+                | CONST <lid> DOSPT <tipodato> IGUAL <exp>
+                | CONST <lid> DOSPT <tipodato>
+                | LET <lid> DOSPT <tipodato> CORIZ CORDER IGUAL NEW VECTOR <tipodato> CORIZ <exp> CORDER
+                | LET <lid> DOSPT <tipodato> CORIZ CORDER CORIZ CORDER IGUAL NEW VECTOR <tipodato> CORIZ <exp> CORDER CORIZ <exp> CORDER
+                | LET <lid> DOSPT <tipodato> CORIZ CORDER IGUAL CORIZ <lexpr> CORDER
+                | LET <lid> DOSPT <tipodato> CORIZ CORDER CORIZ CORDER IGUAL CORIZ <lexpcorchete> CORDER ;
+
+<asignacion> ::= ID IGUAL <exp>
+               | ID CORIZ <exp> CORDER IGUAL <exp>
+               | ID CORIZ <exp> CORDER CORIZ <exp> CORDER IGUAL <exp> ;
+
+<imprimir> ::= PRINT <exp> ;
+
+<fif> ::= IF PARIZ <exp> PARDER LLAVEIZ <lins> LLAVEDER
+        | IF PARIZ <exp> PARDER LLAVEIZ LLAVEDER
+        | IF PARIZ <exp> PARDER LLAVEIZ <lins> LLAVEDER ELSE <fif>
+        | IF PARIZ <exp> PARDER LLAVEIZ <lins> LLAVEDER ELSE LLAVEIZ <lins> LLAVEDER
+        | IF PARIZ <exp> PARDER LLAVEIZ LLAVEDER ELSE LLAVEIZ LLAVEDER ;
+
+<fwhile> ::= WHILE PARIZ <exp> PARDER LLAVEIZ <lins> LLAVEDER
+           | WHILE PARIZ <exp> PARDER LLAVEIZ LLAVEDER ;
+
+<fswitch> ::= SWITCH PARIZ <exp> PARDER LLAVEIZ <lcases> DEFAULT DOSPT <lins> LLAVEDER
+            | SWITCH PARIZ <exp> PARDER LLAVEIZ DEFAULT DOSPT <lins> LLAVEDER
+            | SWITCH PARIZ <exp> PARDER LLAVEIZ <lcases> LLAVEDER
+            | SWITCH PARIZ <exp> PARDER LLAVEIZ LLAVEDER ;
+
+<lcases> ::= <lcases> CASE <exp> DOSPT <lins>
+           | CASE <exp> DOSPT <lins> ;
+
+<fbreak> ::= BREAK ;
+
+<fcontinue> ::= CONTINUE ;
+
+<ffor> ::= FOR PARIZ <declaracion> PTCOMA <exp> PTCOMA <actualizacion> LLAVEIZ <lins> LLAVEDER
+         | FOR PARIZ <asignacion> PTCOMA <exp> PTCOMA <actualizacion> LLAVEIZ LLAVEDER ;
+
+<actualizacion> ::= <asignacion> PARDER
+                  | <incremento> PARDER
+                  | <decremento> PARDER ;
+
+<floop> ::= LOOP LLAVEIZ <lins> LLAVEDER ;
+
+<dowhile> ::= DO LLAVEIZ <lins> LLAVEDER UNTIL PARIZ <exp> PARDER
+            | DO LLAVEIZ LLAVEDER UNTIL PARIZ <exp> PARDER ;
+
+<freturn> ::= RETURN <exp>
+            | RETURN ;
+
+<llamada> ::= ID PARIZ <parametros_2> PARDER
+            | ID PARIZ PARDER ;
+
+<ffuncion> ::= FUNCTION <tipodato> ID PARIZ <parametros> PARDER LLAVEIZ <lins> LLAVEDER
+             | FUNCTION VOID ID PARIZ <parametros> PARDER LLAVEIZ <lins> LLAVEDER
+             | FUNCTION <tipodato> ID PARIZ PARDER LLAVEIZ <lins> LLAVEDER
+             | FUNCTION VOID ID PARIZ PARDER LLAVEIZ <lins> LLAVEDER ;
+
+<parametros> ::= <parametros> COMA <parametro>
+               | <parametro> ;
+
+<parametro> ::= ID DOSPT <tipodato> IGUAL <exp>
+              | ID DOSPT <tipodato> ;
+
+<parametros_2> ::= <parametros_2> COMA <paramro_2>
+                 | <paramro_2> ;
+
+<paramro_2> ::= ID IGUAL <exp> ;
+
+<exp> ::= <exp> MAS <exp>
+        | <exp> MENOS <exp>
+        | <exp> POR <exp>
+        | <exp> DIV <exp>
+        | <exp> MOD <exp>
+        | <exp> ELEV <exp>
+        | <exp> RAIZ <exp>
+        | <exp> AND <exp>
+        | <exp> OR <exp>
+        | NOT <exp>
+        | PARDER <exp> PARDER
+        | <exp> MENOR <exp>
+        | <exp> MAYOR <exp>
+        | <exp> MENORIGUAL <exp>
+        | <exp> MAYORIGUAL <exp>
+        | <exp> DIFERENTE <exp>
+        | <exp> IIGUAL <exp>
+        | <dternario>
+        | <casteos>
+        | <incremento>
+        | <decremento>
+        | <f>
+        | ID CORIZ <exp> CORDER
+        | ID CORIZ <exp> CORDER CORIZ <exp> CORDER
+        | <llamada>
+        | PARIZ <exp> PARDER
+        | <fnativas>
+        | MENOS <exp> %prec UMENOS ;
+
+<tipodato> ::= INT
+             | DOUBLE
+             | BOOLEAN
+             | CHAR
+             | STRING ;
+
+<lexpr> ::= <lexpr> COMA <exp>
+          | <exp> ;
+
+<lid> ::= <lid> COMA ID
+        | ID ;
+
+<lexpcorchete> ::= <lexpcorchete> COMA CORIZ <lexpr> CORDER
+                 | CORIZ <lexpr> CORDER ;
+
+<dternario> ::= IF PARIZ <exp> PARDER <exp> DOSPT <exp> ;
+
+<casteos> ::= CAST PARIZ <exp> AS <tipodato> PARDER %prec FCAST ;
+
+<incremento> ::= <exp> PLUS ;
+
+<decremento> ::= <exp> MIN ;
+
+<f> ::= DOBLE
+      | ENTERO
+      | TRUE
+      | FALSE
+      | CARACTER
+      | Cadena
+      | ID ;
+
+<fnativas> ::= LOWER PARIZ <exp> PARDER
+             | UPPER PARIZ <exp> PARDER
+             | LENGTH PARIZ ID PARDER
+             | TRUNCATE PARIZ <exp> PARDER
+             | ROUND PARIZ <exp> PARDER
+             | <exp> IS <tipodato>
+             | TOSTRING PARIZ <exp> PARDER
+             | CHARARRAY PARIZ <exp> PARDER
+             | REVERSE PARIZ ID PARDER
+             | MAX PARIZ ID PARDER
+             | MIN2 PARIZ ID PARDER
+             | SUM PARIZ ID PARDER
+             | AVERAGE PARIZ ID PARDER ;

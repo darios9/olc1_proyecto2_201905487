@@ -18,6 +18,7 @@ class Dowhile extends Instruccion{
         let cond = false;
         do{
             let nuevoEntorno2 = new Entorno(entorno, 'do while');
+            entorno.guardarSubAmbito(nuevoEntorno2);
             for(let i = 0; i < this.instrucciones.length; i++){
                 let instruccion = this.instrucciones[i];
                 if(instruccion instanceof Continuar){
@@ -28,11 +29,14 @@ class Dowhile extends Instruccion{
                 if(res instanceof Break){
                     return null;
                 }
+                if(res instanceof Return){
+                    return res;
+                }
+                
 
             }
             this.condicion.ejecutar(nuevoEntorno2);
             cond = this.condicion.valor;
-            console.log("consdicion en dowhile "+cond);
         }while(cond);
         return null;
     }

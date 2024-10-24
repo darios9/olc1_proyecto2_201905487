@@ -37,6 +37,7 @@ class DecVectores extends Instruccion {
   }
 
   ejecutar(entorno) {
+
     if (this.data !== undefined) {
       let ej = this.data.ejecutar(entorno);
       let num = this.data.valor;
@@ -89,7 +90,7 @@ class DecVectores extends Instruccion {
             this.columna
           )
         );
-        return null;
+        return ;
       }
       // crear un vector con una lista de valores
       let listaNueva = [];
@@ -98,8 +99,8 @@ class DecVectores extends Instruccion {
         let valor = this.lista[i].valor;
         listaNueva.push(valor)
       }
-
       entorno.guardarVector(this.id, this.tipo, listaNueva, this.linea, this.columna);
+
     } else if (this.listaDeListas !== undefined) {
       let vector = entorno.buscarVector(this.id);
       if (vector) {
@@ -125,6 +126,7 @@ class DecVectores extends Instruccion {
           }
           listaDeListas.push(listaNueva);
         }
+        
         entorno.guardarVector( this.id, this.tipo, listaDeListas, this.linea, this.columna);
     } else {
       errores.push(

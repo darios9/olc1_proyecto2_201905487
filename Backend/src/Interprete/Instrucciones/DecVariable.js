@@ -14,7 +14,7 @@ class DecVariable extends Instruccion{
         this.id = id;
         this.exp = exp;
     }
-
+    
     ejecutar(entorno){
         if (this.id.length == 0 && this.exp == null){
             errores.push(new Error("Semántico", "No se ha declarado ninguna variable", this.fila, this.columna));

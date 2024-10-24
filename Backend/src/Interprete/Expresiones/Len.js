@@ -7,23 +7,24 @@ const { Entorno } = require("../Simbolo/Entorno.js");
 class Len extends Expresion{
     constructor(tipo2, exp, linea, columna){
         super(TipoDato.ERROR, TipoDato.ENTERO, linea, columna);
-        this.exp = exp;
         this.tipo2 = tipo2;
+        this.exp = exp;
     }
 
     ejecutar(entorno){
+
         switch(this.tipo2){
             case "LEN":
                 let variable = entorno.getVariable(this.exp);
                 if(variable){
-                let nuevoValor =entorno.getVariable(this.exp);
-                if (nuevoValor.tipo == TipoDato.CADENA){
-                    this.tipo = TipoDato.ENTERO;
-                    this.valor = nuevoValor.valor.length;
-                    return this.valor;
-                    }else{
-                        errores.push(new Error('Semántico', `No es una cadena`, this.linea, this.columna));
-                    }
+                    let nuevoValor =entorno.getVariable(this.exp);
+                    if(nuevoValor.tipo == TipoDato.CADENA){
+                        this.tipo = TipoDato.ENTERO;
+                        this.valor = nuevoValor.valor.length;
+                        return this.valor;
+                        }else{
+                            errores.push(new Error('Semántico', `No es una cadena`, this.linea, this.columna));
+                        }
                 }
 
                 let vec = entorno.getVector(this.exp);
@@ -32,13 +33,13 @@ class Len extends Expresion{
                     this.valor = vec.valores.length;
                     return this.valor;
                 }else{
-                    errores.push(new Error('Semántico', `error en los datos`, this.linea, this.columna));
+                    errores.push(new Error('Semántico', `error el vector no existe`, this.linea, this.columna));
                 }
                 break;
             case "REVERSE":
                 let vec1 = entorno.getVector(this.exp);
                 if(vec1){
-                    this.tipo = TipoDato.VECTOR;
+                    this.tipo = vec1.tipo;
                     this.valor = vec1.valores.reverse();
                     entorno.actualizar_vector(this.exp, this.valor);
                     return this.valor;      
@@ -52,6 +53,30 @@ class Len extends Expresion{
                     return this.valor;
                 }
                 break;
+            case "MIN":
+                let vec3 = entorno.getVector(this.exp);
+                if(vec3){
+                    this.tipo = TipoDato.ENTERO;
+                    this.valor = Math.min.apply(null, vec3.valores);
+                    return this.valor;
+                }
+                break;
+            case "SUM":
+                let vec4 = entorno.getVector(this.exp);
+                if(vec4){
+                    this.tipo = TipoDato.ENTERO;
+                    this.valor = vec4.valores.reduce((a, b) => a + b, 0);
+                    return this.valor;
+                }
+                break;
+            case "AVERAGE":
+                let vec5 = entorno.getVector(this.exp);
+                if(vec5){
+                    this.tipo = TipoDato.DOUBLEL;
+                    this.valor = vec5.valores.reduce((a, b) => a + b, 0) / vec5.valores.length;
+                    return this.valor;
+                }
+                break
             default:
                 errores.push(new Error('Semántico', 'Tipo de dato no válido', this.linea, this.columna));
                 break;

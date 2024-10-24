@@ -15,7 +15,8 @@ class Funcion extends Instruccion{
     }
 
     ejecutar(entorno){
-       entorno.guardarFuncion(this.id, this);
+        let global = entorno.getGlobal();
+        global.guardarFuncion(this.id, this);
     }
 
     getNodo(){
@@ -23,7 +24,7 @@ class Funcion extends Instruccion{
         nodo.agregarHijo(this.tipoDato);
         nodo.agregarHijo(this.id);
         nodo.agregarHijo("(");
-        if(this.parametros != undefined){
+        if(this.parametros.length > 0){
             let param = new NodoArbol("PARAMETROS");
             for(let i = 0; i < this.parametros.length; i++){
                 param.agregarHijo(this.parametros[i].id);
@@ -35,8 +36,6 @@ class Funcion extends Instruccion{
             }
             nodo.agregarHijoArbol(param);
         }
-        let param = new NodoArbol("PARAMETROS");
-        nodo.agregarHijoArbol(param);
         nodo.agregarHijo(")");
         nodo.agregarHijo("{");
         if(this.instrucciones != undefined){

@@ -6,16 +6,18 @@ const { Entorno } = require("../Simbolo/Entorno.js");
 
 class Return extends Expresion{
     constructor(valorExp, linea, columna){
-        super(valorExp, TipoDato.NULO, linea, columna);
+        super(null, TipoDato.NULO, linea, columna);
         this.valorExp = valorExp;
     }
 
     ejecutar(entorno){
         if(this.valorExp != undefined ){
             this.valorExp.ejecutar(entorno);
-            return this.valorExp.valor;
+            this.tipo = this.valorExp.tipo;
+            this.valor = this.valorExp.valor;
+            return this;
         }
-        return this.valorExp;
+        return this;
     }
 
 

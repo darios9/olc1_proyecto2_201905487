@@ -13,6 +13,10 @@ const Funcion  = require('./Interprete/Instrucciones/Funcion.js');
 const Ejecutar = require('./Interprete/Instrucciones/Ejecutar.js');
 const NodoArbol = require('./Interprete/Simbolo/NodoArbol.js');
 const graficarArbol = require('./Interprete/Graficar.js');
+const obtenerSimbols = require('./Interprete/ObtenerSimbols.js');
+const { TipoDato } = require('./Interprete/Abstracto/Expresion.js');
+const Call = require('./Interprete/Expresiones/Call.js');
+const e = require('express');
 
 // Crea una aplicación Express
 const app = express();
@@ -29,6 +33,11 @@ const port = 3000;
 app.get('/', (req, res) => {
   res.send('¡Hola mundo esto es mi ');
 });
+
+
+
+
+
 
 app.post('/Analyzer', (req, res) => {
   let { code } = req.body;
@@ -54,26 +63,40 @@ app.post('/Analyzer', (req, res) => {
         console.error(error);
       }
     }
-    // segunda pasada para el resto de instrucciones
+
     for (const instr of result) {
-      if(instr instanceof Funcion){
+      if (instr instanceof Funcion || instr instanceof Ejecutar || instr instanceof Call) {
         continue;
       }
       try {
-        instr.ejecutar(ent);
-        instruc.agregarHijoArbol(instr.getNodo());
-
+          instr.ejecutar(ent);
+          instruc.agregarHijoArbol(instr.getNodo());
+        
       } catch (error) {
         console.error(error);
+      }
+    }
+
+
+    // segunda pasada para el resto de instrucciones
+    for (const instr of result) {
+      if(instr instanceof Ejecutar){
+        try {
+          instr.ejecutar(ent);
+          instruc.agregarHijoArbol(instr.getNodo());
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
     
 
     Inicio.agregarHijoArbol(instruc);
-  
-    res.status(200).json({console: sing.getConsola(), ast: graficarArbol(Inicio)});
+    let simbols = new obtenerSimbols(ent);
+    let resultSym = simbols.getSymbolTable();
+    res.status(200).json({console: sing.getConsola(), ast: graficarArbol(Inicio) , simbols: resultSym , errores: sing.getErrores()});
     console.log("********** Consola **********");
-    console.log(sing.getConsola());
+    //console.log(sing.getConsola());
     console.log("********** Errores **********");
     console.log(sing.getErrores());
   } catch (error) {
@@ -82,6 +105,7 @@ app.post('/Analyzer', (req, res) => {
   }
 }
 );
+
 
 // Inicia el servidor
 app.listen(port, () => {

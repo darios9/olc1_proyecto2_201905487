@@ -13,6 +13,7 @@ class Loop extends Instruccion{
 
     ejecutar(entorno){
         let nuevoEntorno = new Entorno(entorno, 'loop');
+        entorno.guardarSubAmbito(nuevoEntorno);
         let cond = true;
         do{
             let nuevoEntorno2 = new Entorno(nuevoEntorno, 'loop');

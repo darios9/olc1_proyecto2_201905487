@@ -23,6 +23,7 @@ class For extends Instruccion{
         let cond = this.condicion.valor;
         while(cond){
             let nuevoEntorno2 = new Entorno(nuevoEntorno, 'for');
+            entorno.guardarSubAmbito(nuevoEntorno2);
             for(let i = 0; i < this.instrucciones.length; i++){
                 let instruccion = this.instrucciones[i];
 

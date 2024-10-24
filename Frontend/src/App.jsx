@@ -12,6 +12,8 @@ function App() {
   const [out, setOut] = useState('');
   const [cst, setCst] = useState('');
   const [ast, setAst] = useState('');
+  const [simbols, setSimbols] = useState('');
+  const [errores, setErrores] = useState([]);
  
 
   const onChange = React.useCallback((value, ViewUpdate) => {
@@ -39,6 +41,8 @@ function App() {
       setOut(data.console);
       setCst(data.cst);
       setAst(data.ast);
+      setSimbols(data.simbols);
+      setErrores(data.errores[0]);
     }).catch(error => {
         console.log(error);
     });
@@ -52,6 +56,12 @@ function App() {
 
     fileDownload(cst, "cst.dot");
     fileDownload(ast, "ast.dot");
+    
+  }
+
+  const handleSimbols = () => {
+    console.log(simbols);
+    
     
   }
 
@@ -80,7 +90,63 @@ function App() {
       <div className='button'>
           <button className='btn1' onClick={handleClick}> Analizar </button>
           <button className='btn2' onClick={handleGenerate}> Generate Tree </button>
+          <button className='btn3' onClick={handleSimbols}> Simbols </button>
+        </div>
+          <div className='table-container'>
+          <h1 className='TituloAnalyzer'> TABLA DE SIMBOLOS </h1>
+            <table>
+              <thead>
+                <tr>
+                  <th>Ámbito</th>
+                  <th>ID</th>
+                  <th>Tipo</th>
+                  <th>Valor</th>
+                  <th>Tipo de Datos</th>
+                  <th>Fila</th>
+                  <th>Columna</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.keys(simbols).map(scope => (
+                  Object.keys(simbols[scope]).map(variable => (
+                    <tr key={`${scope}-${variable}`}>
+                      <td>{scope}</td>
+                      <td>{simbols[scope][variable].id}</td>
+                      <td>{simbols[scope][variable].tipo}</td>
+                      <td>{simbols[scope][variable].valor}</td>
+                      <td>{simbols[scope][variable].tipoDatos}</td>
+                      <td>{simbols[scope][variable].fila}</td>
+                      <td>{simbols[scope][variable].columna}</td>
+                    </tr>
+                  ))
+                ))}
+              </tbody>
+            </table>
+          </div>
+      <div className='table-container'>
+      <h1 className='TituloAnalyzer'> ERRORES </h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Fila</th>
+              <th>Columna</th>
+            </tr>
+          </thead>
+          <tbody>
+            {errores.map((error, index) => (
+              <tr key={index}>
+                <td>{error.tipo}</td>
+                <td>{error.descripcion}</td>
+                <td>{error.fila}</td>
+                <td>{error.columna}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+      
     </div>
   )
 }

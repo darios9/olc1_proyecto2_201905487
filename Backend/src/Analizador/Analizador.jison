@@ -115,7 +115,7 @@
 "string"                return "STRING";
 "true"                  return "TRUE";
 "false"                 return "FALSE";
-"Let"                   return "LET";
+"let"                   return "LET";
 "const"                 return "CONST";
 "vector"                return "VECTOR";
 
@@ -151,6 +151,9 @@
 "IS"                    return "IS";
 "REVERSE"               return "REVERSE";
 "MAX"                   return "MAX";
+"MIN"                   return "MIN2";
+"SUM"                   return "SUM";
+"AVERAGE"               return "AVERAGE";
 "FUNCTION"              return "FUNCTION";
 
 
@@ -214,22 +217,21 @@ INS
     | DOWHILE PTCOMA { $$ = $1; }
     | FLOOP { $$ = $1; }
     | FRETURN { $$ = $1; }
-    | LLAMADA PTCOMA { $$ = $1; }
     | FFUNCION { $$ = $1; }
+    | LLAMADA PTCOMA { $$ = $1; }
     |error    { errores.push(new Error("Error Sintactico", `Error Sintactico, caracter '${yytext}' no esperado.`, this._$.first_line, this._$.first_column));   
         console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); }
 ;
 
 FEJECUTAR
-    : EJECUTAR ID PARIZ PARDER  { $$ = new Ejecutar($2, [], this._$.first_line, this._$.first_column); }
-    | EJECUTAR ID PARIZ PARAMETROS PARDER  { $$ = new Ejecutar($2, $4, this._$.first_line, this._$.first_column); }
+    :EJECUTAR LLAMADA { $$ = new Ejecutar($2, this._$.first_line, this._$.first_column); }
 ;
 
 DECLARACION
-    : LET LID DOSPT TIPODATO   {console.log("los mejores"); $$ = new DecVariable($1, $4, $2, null, $3,this._$.first_line, this._$.first_column); }
-    | LET LID DOSPT TIPODATO IGUAL EXP { $$ = new DecVariable($1, $4, $2, $6, $3,this._$.first_line, this._$.first_column); }
-    | CONST LID DOSPT TIPODATO IGUAL EXP { $$ = new DecVariable($1, $4, $2, $6, $3,this._$.first_line, this._$.first_column); }
-    | CONST LID DOSPT TIPODATO { $$ = new DecVariable($1, $4, $2, null, $3,this._$.first_line, this._$.first_column); }
+    : LET LID DOSPT TIPODATO   { $$ = new DecVariable($1, $4, $2, null,this._$.first_line, this._$.first_column); }
+    | LET LID DOSPT TIPODATO IGUAL EXP { $$ = new DecVariable($1, $4, $2, $6,this._$.first_line, this._$.first_column); }
+    | CONST LID DOSPT TIPODATO IGUAL EXP { $$ = new DecVariable($1, $4, $2, $6,this._$.first_line, this._$.first_column); }
+    | CONST LID DOSPT TIPODATO { $$ = new DecVariable($1, $4, $2, null,this._$.first_line, this._$.first_column); }
     | LET LID DOSPT TIPODATO CORIZ CORDER IGUAL NEW VECTOR TIPODATO CORIZ EXP CORDER { $$ = new DecVectores($2, $4,this._$.first_line, this._$.first_column, $12); }
     | LET LID DOSPT TIPODATO CORIZ CORDER CORIZ CORDER IGUAL NEW VECTOR TIPODATO CORIZ EXP CORDER CORIZ EXP CORDER { $$ = new DecVectores($2, $4, this._$.first_line, this._$.first_column, $14, $17); }
     | LET LID DOSPT TIPODATO CORIZ CORDER IGUAL CORIZ LEXPR CORDER { $$ = new DecVectores($2, $4, this._$.first_line, this._$.first_column, $9); }
@@ -317,9 +319,9 @@ LLAMADA
 
 FFUNCION
     : FUNCTION TIPODATO ID PARIZ PARAMETROS PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion($2, $3, $5, $8, this._$.first_line, this._$.first_column); }
-    | FUNCTION VOID ID PARIZ PARAMETROS PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion(TipoDato.VOID, $3, $5, $8, this._$.first_line, this._$.first_column); }
+    | FUNCTION VOID ID PARIZ PARAMETROS PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion("Void", $3, $5, $8, this._$.first_line, this._$.first_column); }
     | FUNCTION TIPODATO ID PARIZ PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion($2, $3, [], $7, this._$.first_line, this._$.first_column); }
-    | FUNCTION VOID ID PARIZ PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion(TipoDato.VOID, $3, [], $7, this._$.first_line, this._$.first_column); }
+    | FUNCTION VOID ID PARIZ PARDER LLAVEIZ LINS LLAVEDER { $$ = new Funcion("Void", $3, [], $7, this._$.first_line, this._$.first_column); }
 
 ;
 
@@ -437,8 +439,11 @@ FNATIVAS
     |EXP IS TIPODATO { $$ = new FunIs($3, $1, this._$.first_line, this._$.first_column); }
     |TOSTRING PARIZ EXP PARDER { $$ = new FuncionNativa("TOSTRING", $3, this._$.first_line, this._$.first_column); }
     |CHARARRAY PARIZ EXP PARDER { $$ = new FuncionNativa("TOCHARARRAY", $3, this._$.first_line, this._$.first_column); }
-    |REVERSE PARIZ EXP PARDER { $$ = new Len("REVERSE",$3, this._$.first_line, this._$.first_column); }
-    |MAX PARIZ EXP PARDER { $$ = new Len("MAX",$3, this._$.first_line, this._$.first_column); }
+    |REVERSE PARIZ ID PARDER { $$ = new Len("REVERSE",$3, this._$.first_line, this._$.first_column); }
+    |MAX PARIZ ID PARDER { $$ = new Len("MAX",$3, this._$.first_line, this._$.first_column); }
+    |MIN2 PARIZ ID PARDER { $$ = new Len("MIN",$3, this._$.first_line, this._$.first_column); }
+    |SUM PARIZ ID PARDER { $$ = new Len("SUM",$3, this._$.first_line, this._$.first_column); }
+    |AVERAGE PARIZ ID PARDER { $$ = new Len("AVERAGE",$3, this._$.first_line, this._$.first_column); }
    
 
 ;

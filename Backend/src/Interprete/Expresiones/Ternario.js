@@ -15,7 +15,6 @@ class Ternario extends Expresion {
     let condicion = this.condicion.ejecutar(entorno);
     let expre1 = this.expre1.ejecutar(entorno);
     let expre2 = this.expre2.ejecutar(entorno);
-    console.log("Condicion en ternario: " + this.condicion.valor);
     if (this.condicion.tipo === TipoDato.BOOLEANO) {
       if (this.condicion.valor) {
         this.valor = this.expre1.valor;

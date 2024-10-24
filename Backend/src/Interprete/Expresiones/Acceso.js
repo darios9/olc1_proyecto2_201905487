@@ -8,15 +8,20 @@ class Acceso extends Expresion {
         super(id, TipoDato.NULO, fila, columna);
         this.id = id;
     }
-
+        
     ejecutar(entorno) {
         let variable = entorno.getVariable(this.id);
+        let variableVector = entorno.getVector(this.id);
         if(variable){
            let nuevoValor =entorno.getVariable(this.id);
            this.tipo = nuevoValor.tipo;
            this.valor = nuevoValor.valor;
            return nuevoValor;
 
+        }else if(variableVector){
+            this.tipo = variableVector.tipo;
+            this.valor = variableVector.valores;
+            return this.valor;
         }else{
             this.valor = "Error; Variable no Declarada "+ "fila "+this.fila+" columna "+this.columna;
             errores.push(new Error('Semántico', 'Variable no encontrada', this.fila, this.columna));

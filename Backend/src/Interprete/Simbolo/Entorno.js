@@ -1,3 +1,4 @@
+const { errores } = require('../Errores/ListErrores');
 const {Simbolo} = require('./Simbolo');
 const SimVector = require('./SimVector');
 
@@ -8,6 +9,7 @@ class Entorno {
         this.Vectores = new Map();
         this.Funciones = new Map();
         this.anterior = anterior;
+        this.subAmbitos = [];
     }
 
     guardarVariable(id, tipo, valor, tipoDato, fila, columna) {
@@ -28,7 +30,15 @@ class Entorno {
         }
         return false; 
     } 
-    
+    ActualizarVariableEntornoActual(id, valor){
+        for(const entry of Array.from(this.Variables.entries())) {
+            if(entry[0] === id) {
+                entry[1].valor = valor;
+                return true;
+            }   
+        }
+        return false;
+    }
     // obtiene una variable del entorno actual y si no la encuentra busca en el entorno anterior
     getVariable(id) {
         let env = this;
@@ -98,6 +108,8 @@ class Entorno {
         return null;
     }
 
+    
+
     // actualiza el valor de un vector en el entorno actual
     actualizar_vector(nombre, new_valor) {
         let env = this;
@@ -117,11 +129,10 @@ class Entorno {
 
     // crear metodo para guardar, buscar y obtener una funcion
     guardarFuncion(id, funcion) {
-        if(!this.buscarFuncion(id)) {
-            this.Funciones.set(id, funcion);
-            return true;
+        if(this.Funciones.has(id)) {
+            errores.push(new Error('Semantico', `La funcion ${id} ya existe`, 0, 0));
         }
-        return false;
+        this.Funciones.set(id, funcion);
     }
 
     // Busca una funcion en el entorno actual
@@ -163,14 +174,17 @@ class Entorno {
         let env = this;
         while(env != null){
             if(env.Variables.has(id)){
-                if(env.Variables.has(id)){
-                    env.Variables.set(id, new Simbolo(id, tipo, valor, tipoDato, fila, columna));
-                    return ;
-                }
+                env.Variables.set(id, new Simbolo(id, tipo, valor, tipoDato, fila, columna));
+                return ;
             }
             env = env.anterior;
         }
         this.Variables.set(id, new Simbolo(id, tipo, valor, tipoDato, fila, columna));
+    }
+
+    //funcion para guardar un subambito
+    guardarSubAmbito(ambito){
+        this.subAmbitos.push(ambito);
     }
 
 

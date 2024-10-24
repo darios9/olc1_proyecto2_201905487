@@ -7,6 +7,7 @@ const { TipoDato } = require("../Abstracto/Expresion.js");
 const {Entorno} = require("../Simbolo/Entorno.js");
 const Break = require("./Break.js");
 const Continuar = require("./Continuar.js");
+const Return = require("../Expresiones/Return.js");
 
 
 class While extends Instruccion {
@@ -21,17 +22,23 @@ class While extends Instruccion {
         let cond = this.condicion.valor;
         while (cond) {
             let nuevoEntorno = new Entorno(entorno, 'while');
+            entorno.guardarSubAmbito(nuevoEntorno);
             for (let i = 0; i < this.instrucciones.length; i++) {
                 let instruccion = this.instrucciones[i];
 
                 if (instruccion instanceof Continuar) {
                     return instruccion;
                 }
-
-
                 let res = instruccion.ejecutar(nuevoEntorno);
                 if (res instanceof Break) {
                     return null;
+                }
+                if (res instanceof Continuar) {
+                    return res;
+                }
+
+                if (res instanceof Return) {
+                    return res;
                 }
             }
             this.condicion.ejecutar(nuevoEntorno);

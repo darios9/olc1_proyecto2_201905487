@@ -15,23 +15,28 @@ class Call extends Expresion{
     }
 
     ejecutar(entorno){
+        let global = entorno.getGlobal();
 
-        let funcion = entorno.getFuncion(this.id);
-        this.tipo = funcion.tipoDato;
+        let funcion = global.getFuncion(this.id);
+
+        
         if(funcion != null){
-            let nuevoEntorno = new Entorno(entorno.getGlobal(), 'Funcion');
+            this.tipo = funcion.tipoDato;
+            let nuevoEntorno = new Entorno(global, 'Funcion');
+            entorno.guardarSubAmbito(nuevoEntorno);
             if(this.parametros.length == funcion.parametros.length){
                 
                 for(let i = 0; i < this.parametros.length; i++){
                     let id = funcion.parametros[i].id;
                     let tipo = funcion.parametros[i].tipo;
-
                     this.parametros[i].valor.ejecutar(entorno);
-                    
-                    let tipoParam = this.parametros[i].valor.tipo;
                     let valor = this.parametros[i].valor.valor;
+                    let tipoParam = this.parametros[i].valor.tipo;
+                    
+                    
+                    
                     if(tipo == tipoParam){
-                        nuevoEntorno.guardar(id, tipo, valor, 'let', this.linea, this.columna);
+                        nuevoEntorno.guardarVariable(id, tipo, valor, 'let', this.linea, this.columna);
                         
                     }else{
                         errores.push(new Error('Semantico', `El tipo de dato no coincide con el parametro ${id}`, this.linea, this.columna));
@@ -39,11 +44,10 @@ class Call extends Expresion{
                     
                 }
                 for(let instr of funcion.instrucciones){
-
                     let res = instr.ejecutar(nuevoEntorno);
                     if (res instanceof Return) {
-                        this.tipo = res.valor.tipo;
-                        this.valor = res.valor.valor;
+                        this.tipo = res.tipo;
+                        this.valor = res.valor;
                         return res;
                     }
 
@@ -51,7 +55,7 @@ class Call extends Expresion{
                     if(instr instanceof Return){
                         this.tipo = funcion.tipoDato;
                         this.valor = instr.valor.valor;
-                        return instr.valor.valor;
+                        break;
                     }
                     
                     

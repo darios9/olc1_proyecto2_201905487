@@ -30,11 +30,13 @@ class If extends Instruccion {
         }
         if (this.condicion.valor) {
             let nuevoEntorno = new Entorno(entorno, 'if');
+            entorno.guardarSubAmbito(nuevoEntorno);
             for (let inst of this.instrucciones) {
                 let res = inst.ejecutar(nuevoEntorno); 
                 if (res instanceof Continuar) {
                     return res;
                 }
+
                 if (res instanceof Return) {
                     return res;
                 }
@@ -56,36 +58,13 @@ class If extends Instruccion {
             }
                 
         }else if(typeof this.instElseIf != 'undefined'){
-            let nuevoEntorno = new Entorno(entorno, 'else if');
-            for (let inst of this.instElseIf.instrucciones) {
-                let res = inst.ejecutar(nuevoEntorno); 
-                if (res instanceof Continuar) {
-                    return res;
-                }
-                if (res instanceof Return) {
-                    console.log("entro a return  "+res.valor);
-                    return res;
-                }
-
-                if (res instanceof Break) {
-                    return res;
-                }
-                
-                if (inst instanceof Continuar) {
-                    return inst;
-                }
-                if (inst instanceof Break) {
-                    break;
-                }
-                if (inst instanceof Return) {
-                    console.log("entro a return  pero ruera "+inst.valor.valor);
-                    return inst;
-                }
-                
-            }
+            let newEntorno = new Entorno(entorno, 'elseIf');
+            let resul = this.instElseIf.ejecutar(newEntorno);
+            return resul;
         }else {
             if (typeof this.insElse != 'undefined') {
                 let nuevoEntorno = new Entorno(entorno, 'else');
+                entorno.guardarSubAmbito(nuevoEntorno);
                 for (let inst of this.insElse) {
                     let res = inst.ejecutar(nuevoEntorno);
                     if (res instanceof Continuar) {
@@ -97,7 +76,6 @@ class If extends Instruccion {
                     }
                     
                     if (res instanceof Return) {
-                        console.log("entro a return else  "+res.valor);
                         return res;
                     }
 
@@ -109,7 +87,7 @@ class If extends Instruccion {
                         return inst;
                     }
                     if (inst instanceof Return) {
-                        console.log("entro a return  "+inst.valor);
+                        console.log("entro a return 77 "+inst.valor);
                         return inst;
                     }
                 }

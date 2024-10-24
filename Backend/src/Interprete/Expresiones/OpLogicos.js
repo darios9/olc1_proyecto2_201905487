@@ -32,13 +32,10 @@ class OpLogicos extends Expresion {
                 errores.push(new Error('Semántico', 'Error de tipos en operación lógica', this.fila, this.columna));
             }
         }else if(this.izq == null){
-            console.log("Valor de la po: "+ this.der.tipo);
             if (this.der.tipo === TipoDato.BOOLEANO) {
-                console.log("valor del operador: "+ this.operador);
                 switch (this.operador) {
 
                     case "!":
-                        console.log("Valor de la variable a negar: "+ this.der.valor);
                         this.valor = !this.der.valor;
                         break;
                 }

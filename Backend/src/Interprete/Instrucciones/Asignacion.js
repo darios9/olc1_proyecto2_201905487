@@ -13,13 +13,13 @@ class Asignacion extends Instruccion{
     }
 
     ejecutar(entorno){
-        let variable = entorno.buscarVariable(this.id);
         let sim = entorno.getVariable(this.id);
         if(sim){
             let valor = this.exp.ejecutar(entorno);
             if(sim.tipoDato == "let"){
                 
                 if(sim.tipo == this.exp.tipo){
+                    
                     entorno.actualizar_variable(this.id, this.exp.valor);
                 }else{
                     errores.push(new Error("Semántico", "Error de tipos en la asignación", this.fila, this.columna));
