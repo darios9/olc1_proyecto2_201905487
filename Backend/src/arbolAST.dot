@@ -24,7 +24,7 @@ n11[label="("];
     n9 -> n11;
 n12[label="LITERAL"];
     n9 -> n12;
-n13[label="12"];
+n13[label="10"];
     n12 -> n13;
 n14[label=")"];
     n9 -> n14;

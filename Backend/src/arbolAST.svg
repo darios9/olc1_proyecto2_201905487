@@ -211,7 +211,7 @@
 <g id="node14" class="node">
 <title>n13</title>
 <ellipse fill="none" stroke="black" cx="532.6" cy="-882" rx="27" ry="18"/>
-<text text-anchor="middle" x="532.6" y="-878.3" font-family="Times New Roman,serif" font-size="14.00">12</text>
+<text text-anchor="middle" x="532.6" y="-878.3" font-family="Times New Roman,serif" font-size="14.00">10</text>
 </g>
 <!-- n12&#45;&gt;n13 -->
 <g id="edge13" class="edge">
