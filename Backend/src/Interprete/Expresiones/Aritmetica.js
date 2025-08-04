@@ -324,19 +324,20 @@ class Aritmetica extends Expresion {
         case "$":
             if(this.op1.tipo === TipoDato.ENTERO && this.op2.tipo === TipoDato.ENTERO){
                 this.tipo = TipoDato.DOUBLE;
-                this.valor = Math.pow(this.op1.valor, this.op2.valor);
+                this.valor = Math.pow(this.op1.valor, 1/this.op2.valor);
+                
             }
             else if(this.op1.tipo === TipoDato.ENTERO && this.op2.tipo === TipoDato.DOUBLE){
                 this.tipo = TipoDato.DOUBLE;
-                this.valor = Math.pow(this.op1.valor, this.op2.valor);
+                this.valor = Math.pow(this.op1.valor, 1/this.op2.valor);
             }
             else if(this.op1.tipo === TipoDato.DOUBLE && this.op2.tipo === TipoDato.ENTERO){
                 this.tipo = TipoDato.DOUBLE;
-                this.valor = Math.pow(this.op1.valor, this.op2.valor);
+                this.valor = Math.pow(this.op1.valor, 1/this.op2.valor);
             }
             else if(this.op1.tipo === TipoDato.DOUBLE && this.op2.tipo === TipoDato.DOUBLE){
                 this.tipo = TipoDato.DOUBLE;
-                this.valor = Math.pow(this.op1.valor, this.op2.valor);
+                this.valor = Math.pow(this.op1.valor, 1/this.op2.valor);
             }
             else{
                 errores.push(new Error('Semántico', 'No se pueden elevar los tipos de datos', this.fila, this.columna));

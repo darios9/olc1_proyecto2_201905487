@@ -219,6 +219,7 @@ INS
     | FRETURN { $$ = $1; }
     | FFUNCION { $$ = $1; }
     | LLAMADA PTCOMA { $$ = $1; }
+    | FNATIVAS PTCOMA { $$ = $1; }
     |error    { errores.push(new Error("Error Sintactico", `Error Sintactico, caracter '${yytext}' no esperado.`, this._$.first_line, this._$.first_column));   
         console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); }
 ;
@@ -437,8 +438,8 @@ FNATIVAS
     |TRUNCATE PARIZ EXP PARDER { $$ = new Nativas("TRUNCATE", $3, this._$.first_line, this._$.first_column); }
     |ROUND PARIZ EXP PARDER { $$ = new Nativas("ROUND", $3, this._$.first_line, this._$.first_column); }
     |EXP IS TIPODATO { $$ = new FunIs($3, $1, this._$.first_line, this._$.first_column); }
-    |TOSTRING PARIZ EXP PARDER { $$ = new FuncionNativa("TOSTRING", $3, this._$.first_line, this._$.first_column); }
-    |CHARARRAY PARIZ EXP PARDER { $$ = new FuncionNativa("TOCHARARRAY", $3, this._$.first_line, this._$.first_column); }
+    |TOSTRING PARIZ EXP PARDER { $$ = new Nativas("TOSTRING", $3, this._$.first_line, this._$.first_column); }
+    |CHARARRAY PARIZ EXP PARDER { $$ = new Nativas("TOCHARARRAY", $3, this._$.first_line, this._$.first_column); }
     |REVERSE PARIZ ID PARDER { $$ = new Len("REVERSE",$3, this._$.first_line, this._$.first_column); }
     |MAX PARIZ ID PARDER { $$ = new Len("MAX",$3, this._$.first_line, this._$.first_column); }
     |MIN2 PARIZ ID PARDER { $$ = new Len("MIN",$3, this._$.first_line, this._$.first_column); }

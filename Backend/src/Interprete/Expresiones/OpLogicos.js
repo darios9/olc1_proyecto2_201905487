@@ -49,7 +49,9 @@ class OpLogicos extends Expresion {
 
     getNodo() {
         let nodo = new NodoArbol("LOGICO");
-        nodo.agregarHijoArbol(this.izq.getNodo());
+        if (this.izq != null) {
+            nodo.agregarHijoArbol(this.izq.getNodo());
+        }
         nodo.agregarHijo(this.operador);
         nodo.agregarHijoArbol(this.der.getNodo());
         return nodo;

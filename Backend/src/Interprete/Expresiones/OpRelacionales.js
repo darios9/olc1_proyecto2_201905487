@@ -51,9 +51,9 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor === this.der.valor;
                 }else if(this.izq.tipo === TipoDato.CHAR && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor === this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor === this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.NULO){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor === this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor === this.der.valor;
@@ -63,7 +63,7 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor === this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CHAR){
                     this.valor = this.izq.valor === this.der.valor;
-                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor === this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.BOOLEANO){
                     this.valor = this.izq.valor === this.der.valor;
@@ -102,9 +102,9 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor.charCodeAt(0) !== this.der.valor;
                 }else if(this.izq.tipo === TipoDato.CHAR && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor !== this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor !== this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.NULO){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor !== this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor !== this.der.valor;
@@ -114,7 +114,7 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor !== this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CHAR){   
                     this.valor = this.izq.valor !== this.der.valor;
-                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor !== this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.BOOLEANO){
                     this.valor = this.izq.valor !== this.der.valor;
@@ -152,9 +152,9 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor.charCodeAt(0) > this.der.valor;
                 }else if(this.izq.tipo === TipoDato.CHAR && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor > this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor > this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.NULO){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor > this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor > this.der.valor;
@@ -164,7 +164,7 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor > this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CHAR){   
                     this.valor = this.izq.valor > this.der.valor;
-                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor > this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.BOOLEANO){
                     this.valor = this.izq.valor > this.der.valor;
@@ -204,9 +204,9 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor.charCodeAt(0) < this.der.valor;
                 }else if(this.izq.tipo === TipoDato.CHAR && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor < this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor < this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.NULO){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor < this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor < this.der.valor;
@@ -216,7 +216,7 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor < this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CHAR){
                     this.valor = this.izq.valor < this.der.valor;
-                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor < this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.BOOLEANO){
                     this.valor = this.izq.valor < this.der.valor;
@@ -255,9 +255,9 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor.charCodeAt(0) >= this.der.valor;
                 }else if(this.izq.tipo === TipoDato.CHAR && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor >= this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor >= this.der.valor;
-                } else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.NULO){
+                } else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor >= this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor >= this.der.valor;
@@ -267,7 +267,7 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor >= this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CHAR){
                     this.valor = this.izq.valor >= this.der.valor;
-                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.STRING){ 
+                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CADENA){ 
                     this.valor = this.izq.valor >= this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.BOOLEANO){   
                     this.valor = this.izq.valor >= this.der.valor;
@@ -307,9 +307,9 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor.charCodeAt(0) <= this.der.valor;
                 }else if(this.izq.tipo === TipoDato.CHAR && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor <= this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor <= this.der.valor;
-                }else if(this.izq.tipo === TipoDato.STRING && this.der.tipo === TipoDato.NULO){
+                }else if(this.izq.tipo === TipoDato.CADENA && this.der.tipo === TipoDato.NULO){
                     this.valor = this.izq.valor <= this.der.valor;
                 }
                 else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.NULO){
@@ -320,7 +320,7 @@ class OpRelacioneles extends Expresion {
                     this.valor = this.izq.valor <= this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CHAR){
                     this.valor = this.izq.valor <= this.der.valor
-                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.STRING){
+                }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.CADENA){
                     this.valor = this.izq.valor <= this.der.valor;
                 }else if(this.izq.tipo === TipoDato.NULO && this.der.tipo === TipoDato.BOOLEANO){
                     this.valor = this.izq.valor <= this.der.valor;

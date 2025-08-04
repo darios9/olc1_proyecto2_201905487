@@ -5,6 +5,8 @@ const  NodoArbol  = require("../Simbolo/NodoArbol.js");
 const { Entorno } = require("../Simbolo/Entorno.js");
 const Break = require("./Break.js");
 const Continuar = require("./Continuar.js");
+const Return = require("../Expresiones/Return.js");
+
 
 class Switch extends Instruccion {
     constructor(expresion, casos, defecto, linea, columna) {

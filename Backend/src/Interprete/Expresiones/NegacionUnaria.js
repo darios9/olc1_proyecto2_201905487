@@ -1,6 +1,6 @@
 const { Expresion, TipoDato } = require("../Abstracto/Expresion");
 const { errores } = require("../Errores/ListErrores");
-const { Error } = require("../Errores/Error");
+const  Error  = require("../Errores/Error");
 const NodoArbol = require("../Simbolo/NodoArbol");
 const e = require("express");
 
@@ -24,12 +24,12 @@ class NegacionUnaria extends Expresion{
                     this.tipo = TipoDato.ENTERO;
                     this.valor = -this.exp.valor;
                     return this;
-                }else if(this.exp.tipo == TipoDato.DECIMAL){
-                    this.tipo = TipoDato.DECIMAL;
+                }else if(this.exp.tipo == TipoDato.DOUBLE){
+                    this.tipo = TipoDato.DOUBLE;
                     this.valor = -this.exp.valor;
                     return this;
                 }else{
-                    errores.push(new Error('Semántico', 'Tipo de dato no válido', this.linea, this.columna));
+                    errores.push(new Error('Semántico', 'No se puede negar un valor no numérico', this.linea, this.columna));
                 }
                 break;
             default:

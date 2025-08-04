@@ -96,7 +96,7 @@ app.post('/Analyzer', (req, res) => {
     let resultSym = simbols.getSymbolTable();
     res.status(200).json({console: sing.getConsola(), ast: graficarArbol(Inicio) , simbols: resultSym , errores: sing.getErrores()});
     console.log("********** Consola **********");
-    //console.log(sing.getConsola());
+    console.log(sing.getConsola());
     console.log("********** Errores **********");
     console.log(sing.getErrores());
   } catch (error) {
